@@ -1,0 +1,30 @@
+{
+    "name": "innmind/validation",
+    "type": "library",
+    "description": "",
+    "keywords": [],
+    "homepage": "http://github.com/innmind/validation",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Baptiste Langlade",
+            "email": "baptiste.langlade@hey.com"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/innmind/validation/issues"
+    },
+    "require": {
+        "php": "~8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Innmind\\Validation\\": "src/"
+        }
+    },
+    "require-dev": {
+        "vimeo/psalm": "~5.0",
+        "innmind/black-box": "~5.5",
+        "innmind/coding-standard": "~2.0"
+    }
+}
