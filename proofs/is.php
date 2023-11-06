@@ -34,10 +34,16 @@ return static function() {
             $assert->false(
                 Is::string()->asPredicate()($other),
             );
-            $assert->null(
+            $assert->same(
+                [['$', 'Value is not of type string']],
                 Is::string()($other)->match(
-                    static fn($value) => $value,
                     static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
                 ),
             );
         },
