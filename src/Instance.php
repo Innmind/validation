@@ -62,6 +62,11 @@ final class Instance implements Constraint
         return OrConstraint::of($this, $constraint);
     }
 
+    public function map(callable $map): Constraint
+    {
+        return Map::of($this, $map);
+    }
+
     public function asPredicate(): Predicate
     {
         return $this->assert;

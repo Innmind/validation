@@ -40,6 +40,15 @@ interface Constraint
     public function or(self $constraint): self;
 
     /**
+     * @template T
+     *
+     * @param pure-callable(O): T $map
+     *
+     * @return self<I, T>
+     */
+    public function map(callable $map): self;
+
+    /**
      * @return Predicate<O>
      */
     public function asPredicate(): Predicate;
