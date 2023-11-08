@@ -39,6 +39,8 @@ final class Is implements Constraint
     }
 
     /**
+     * @psalm-pure
+     *
      * @return self<string>
      */
     public static function string(): self
@@ -48,6 +50,8 @@ final class Is implements Constraint
     }
 
     /**
+     * @psalm-pure
+     *
      * @return self<int>
      */
     public static function int(): self
@@ -57,6 +61,8 @@ final class Is implements Constraint
     }
 
     /**
+     * @psalm-pure
+     *
      * @return self<float>
      */
     public static function float(): self
@@ -66,6 +72,8 @@ final class Is implements Constraint
     }
 
     /**
+     * @psalm-pure
+     *
      * @return self<array>
      */
     public static function array(): self
