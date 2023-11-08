@@ -12,19 +12,19 @@ use Innmind\Immutable\{
  * @template-covariant A
  * @template-covariant B
  * @template-covariant C
- * @implements Constraint<A, C>
+ * @implements Constraint<A, B|C>
  * @psalm-immutable
  */
-final class AndConstraint implements Constraint
+final class OrConstraint implements Constraint
 {
     /** @var Constraint<A, B> */
     private Constraint $a;
-    /** @var Constraint<B, C> */
+    /** @var Constraint<A, C> */
     private Constraint $b;
 
     /**
      * @param Constraint<A, B> $a
-     * @param Constraint<B, C> $b
+     * @param Constraint<A, C> $b
      */
     private function __construct(Constraint $a, Constraint $b)
     {
@@ -35,8 +35,8 @@ final class AndConstraint implements Constraint
     public function __invoke(mixed $input): Validation
     {
         /** @psalm-suppress MixedArgument */
-        return ($this->a)($input)->flatMap(
-            fn($value) => ($this->b)($value),
+        return ($this->a)($input)->otherwise(
+            fn() => ($this->b)($input),
         );
     }
 
@@ -47,7 +47,7 @@ final class AndConstraint implements Constraint
      * @psalm-pure
      *
      * @param Constraint<T, U> $a
-     * @param Constraint<U, V> $b
+     * @param Constraint<T, V> $b
      *
      * @return self<T, U, V>
      */
@@ -61,9 +61,9 @@ final class AndConstraint implements Constraint
         return new self($this, $constraint);
     }
 
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint $constraint): self
     {
-        return OrConstraint::of($this, $constraint);
+        return new self($this, $constraint);
     }
 
     public function asPredicate(): PredicateInterface

@@ -18,6 +18,15 @@ return static function() {
             $assert->true(
                 Each::of(Is::int())->asPredicate()($ints),
             );
+            $assert->true(
+                Each::of(Is::int()->or(Is::string()))->asPredicate()($strings),
+            );
+            $assert->true(
+                Each::of(Is::int()->or(Is::string()))->asPredicate()(\array_merge(
+                    $ints,
+                    $strings,
+                )),
+            );
             $assert->same(
                 $ints,
                 Each::of(Is::int())($ints)->match(

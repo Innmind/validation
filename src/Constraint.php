@@ -31,6 +31,15 @@ interface Constraint
     public function and(self $constraint): self;
 
     /**
+     * @template T
+     *
+     * @param self<I, T> $constraint
+     *
+     * @return self<I, O|T>
+     */
+    public function or(self $constraint): self;
+
+    /**
      * @return Predicate<O>
      */
     public function asPredicate(): Predicate;

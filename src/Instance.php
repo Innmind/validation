@@ -57,6 +57,11 @@ final class Instance implements Constraint
         return AndConstraint::of($this, $constraint);
     }
 
+    public function or(Constraint $constraint): Constraint
+    {
+        return OrConstraint::of($this, $constraint);
+    }
+
     public function asPredicate(): Predicate
     {
         return $this->assert;

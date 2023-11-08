@@ -49,6 +49,11 @@ final class PointInTime implements Constraint
         return AndConstraint::of($this, $constraint);
     }
 
+    public function or(Constraint $constraint): Constraint
+    {
+        return OrConstraint::of($this, $constraint);
+    }
+
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
