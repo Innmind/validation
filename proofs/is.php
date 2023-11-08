@@ -248,4 +248,57 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::null()',
+        given(
+            Set\Either::any(
+                Set\Strings::any(),
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    new \stdClass,
+                ),
+                Set\Sequence::of(Set\Either::any(
+                    Set\Strings::any(),
+                    Set\Integers::any(),
+                    Set\RealNumbers::any(),
+                    Set\Elements::of(
+                        true,
+                        false,
+                        null,
+                        new \stdClass,
+                    ),
+                )),
+            ),
+        ),
+        static function($assert, $other) {
+            $assert->true(
+                Is::null()->asPredicate()(null),
+            );
+            $assert->null(
+                Is::null()(null)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::null()->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type null']],
+                Is::null()($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
 };
