@@ -48,4 +48,48 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::int()',
+        given(
+            Set\Integers::any(),
+            Set\Either::any(
+                Set\Strings::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new \stdClass,
+                ),
+                Set\Sequence::of(Set\Strings::any()),
+            ),
+        ),
+        static function($assert, $int, $other) {
+            $assert->true(
+                Is::int()->asPredicate()($int),
+            );
+            $assert->same(
+                $int,
+                Is::int()($int)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::int()->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type int']],
+                Is::int()($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
 };
