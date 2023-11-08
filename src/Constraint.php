@@ -19,7 +19,16 @@ interface Constraint
      * @param I $input
      * @return Validation<Failure, O>
      */
-    public function __invoke($input): Validation;
+    public function __invoke(mixed $input): Validation;
+
+    /**
+     * @template T
+     *
+     * @param self<O, T> $constraint
+     *
+     * @return self<I, T>
+     */
+    public function and(self $constraint): self;
 
     /**
      * @return Predicate<O>

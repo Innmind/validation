@@ -47,6 +47,11 @@ final class Is implements Constraint
         return new self(\is_string(...), 'string');
     }
 
+    public function and(Constraint $constraint): Constraint
+    {
+        return AndConstraint::of($this, $constraint);
+    }
+
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
