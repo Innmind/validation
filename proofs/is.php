@@ -139,4 +139,59 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::array()',
+        given(
+            Set\Sequence::of(Set\Either::any(
+                Set\Strings::any(),
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new \stdClass,
+                ),
+            )),
+            Set\Either::any(
+                Set\Strings::any(),
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new \stdClass,
+                ),
+            ),
+        ),
+        static function($assert, $array, $other) {
+            $assert->true(
+                Is::array()->asPredicate()($array),
+            );
+            $assert->same(
+                $array,
+                Is::array()($array)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::array()->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type array']],
+                Is::array()($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
 };
