@@ -143,17 +143,30 @@ return static function() {
     yield proof(
         'Is::array()',
         given(
-            Set\Sequence::of(Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
-                    true,
-                    false,
-                    null,
-                    new \stdClass,
+            Set\Either::any(
+                Set\Sequence::of(Set\Either::any(
+                    Set\Strings::any(),
+                    Set\Integers::any(),
+                    Set\RealNumbers::any(),
+                    Set\Elements::of(
+                        true,
+                        false,
+                        null,
+                        new \stdClass,
+                    ),
+                )),
+                Set\Composite::immutable(
+                    static fn($keys, $values) => \array_combine(
+                        \array_slice($keys, 0, \min(\count($keys), \count($values))),
+                        \array_slice($values, 0, \min(\count($keys), \count($values))),
+                    ),
+                    Set\Sequence::of(Set\Either::any(
+                        Set\Integers::any(),
+                        Set\Strings::any(),
+                    )),
+                    Set\Sequence::of(Set\Type::any()),
                 ),
-            )),
+            ),
             Set\Either::any(
                 Set\Strings::any(),
                 Set\Integers::any(),
@@ -290,6 +303,61 @@ return static function() {
             $assert->same(
                 [['$', 'Value is not of type null']],
                 Is::null()($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::list()',
+        given(
+            Set\Sequence::of(Set\Either::any(
+                Set\Strings::any(),
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new \stdClass,
+                ),
+            )),
+            Set\Composite::immutable(
+                static fn($keys, $values) => \array_combine(
+                    \array_slice($keys, 0, \min(\count($keys), \count($values))),
+                    \array_slice($values, 0, \min(\count($keys), \count($values))),
+                ),
+                Set\Sequence::of(Set\Either::any(
+                    Set\Integers::any(),
+                    Set\Strings::any(),
+                ))->atLeast(1),
+                Set\Sequence::of(Set\Type::any())->atLeast(1),
+            ),
+        ),
+        static function($assert, $array, $other) {
+            $assert->true(
+                Is::list()->asPredicate()($array),
+            );
+            $assert->same(
+                $array,
+                Is::list()($array)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::list()->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type list']],
+                Is::list()($other)->match(
                     static fn() => null,
                     static fn($failures) => $failures
                         ->map(static fn($failure) => [

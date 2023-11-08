@@ -10,18 +10,19 @@ use Innmind\Immutable\{
 
 /**
  * @template-covariant T
- * @implements Constraint<mixed, T>
+ * @template-covariant U
+ * @implements Constraint<T, U>
  * @psalm-immutable
  */
 final class Is implements Constraint
 {
-    /** @var pure-callable(mixed): bool */
+    /** @var pure-callable(T): bool */
     private $assert;
     /** @var non-empty-string */
     private string $type;
 
     /**
-     * @param pure-callable(mixed): bool $assert
+     * @param pure-callable(T): bool $assert
      * @param non-empty-string $type
      */
     private function __construct(callable $assert, string $type)
@@ -32,6 +33,7 @@ final class Is implements Constraint
 
     public function __invoke(mixed $value): Validation
     {
+        /** @var Validation<Failure, U> */
         return match (($this->assert)($value)) {
             true => Validation::success($value),
             false => Validation::fail(Failure::of("Value is not of type {$this->type}")),
@@ -41,67 +43,78 @@ final class Is implements Constraint
     /**
      * @psalm-pure
      *
-     * @return self<string>
+     * @return self<mixed, string>
      */
     public static function string(): self
     {
-        /** @var self<string> */
+        /** @var self<mixed, string> */
         return new self(\is_string(...), 'string');
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<int>
+     * @return self<mixed, int>
      */
     public static function int(): self
     {
-        /** @var self<int> */
+        /** @var self<mixed, int> */
         return new self(\is_int(...), 'int');
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<float>
+     * @return self<mixed, float>
      */
     public static function float(): self
     {
-        /** @var self<float> */
+        /** @var self<mixed, float> */
         return new self(\is_float(...), 'float');
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<array>
+     * @return self<mixed, array>
      */
     public static function array(): self
     {
-        /** @var self<array> */
+        /** @var self<mixed, array> */
         return new self(\is_array(...), 'array');
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<bool>
+     * @return self<mixed, bool>
      */
     public static function bool(): self
     {
-        /** @var self<bool> */
+        /** @var self<mixed, bool> */
         return new self(\is_bool(...), 'bool');
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<null>
+     * @return self<mixed, null>
      */
     public static function null(): self
     {
-        /** @var self<null> */
+        /** @var self<mixed, null> */
         return new self(\is_null(...), 'null');
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<array, list>
+     */
+    public static function list(): self
+    {
+        /** @var self<array, list> */
+        return new self(\array_is_list(...), 'list');
     }
 
     public function and(Constraint $constraint): Constraint
