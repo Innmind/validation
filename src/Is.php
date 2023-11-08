@@ -56,6 +56,15 @@ final class Is implements Constraint
         return new self(\is_int(...), 'int');
     }
 
+    /**
+     * @return self<float>
+     */
+    public static function float(): self
+    {
+        /** @var self<float> */
+        return new self(\is_float(...), 'float');
+    }
+
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
