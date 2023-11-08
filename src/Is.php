@@ -82,6 +82,17 @@ final class Is implements Constraint
         return new self(\is_array(...), 'array');
     }
 
+    /**
+     * @psalm-pure
+     *
+     * @return self<bool>
+     */
+    public static function bool(): self
+    {
+        /** @var self<bool> */
+        return new self(\is_bool(...), 'bool');
+    }
+
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);

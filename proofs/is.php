@@ -194,4 +194,58 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::bool()',
+        given(
+            Set\Elements::of(true, false),
+            Set\Either::any(
+                Set\Strings::any(),
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    null,
+                    new \stdClass,
+                ),
+                Set\Sequence::of(Set\Either::any(
+                    Set\Strings::any(),
+                    Set\Integers::any(),
+                    Set\RealNumbers::any(),
+                    Set\Elements::of(
+                        true,
+                        false,
+                        null,
+                        new \stdClass,
+                    ),
+                )),
+            ),
+        ),
+        static function($assert, $bool, $other) {
+            $assert->true(
+                Is::bool()->asPredicate()($bool),
+            );
+            $assert->same(
+                $bool,
+                Is::bool()($bool)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::bool()->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type bool']],
+                Is::bool()($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
 };
