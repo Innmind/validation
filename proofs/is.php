@@ -56,7 +56,7 @@ return static function() {
             Set\Integers::any(),
             Set\Either::any(
                 Set\Strings::any(),
-                Set\RealNumbers::any()->filter(static fn($float) => !\is_int($float)),
+                Set\RealNumbers::any()->map(static fn($value) => $value * 1.1), // force being floats
                 Set\Elements::of(
                     true,
                     false,
