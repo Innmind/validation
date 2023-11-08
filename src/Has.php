@@ -29,7 +29,7 @@ final class Has implements Constraint
     {
         return match (\array_key_exists($this->key, $value)) {
             true => Validation::success($value[$this->key]),
-            false => Validation::fail(Failure::of("Unknown key {$this->key}")),
+            false => Validation::fail(Failure::of("The key {$this->key} is missing")),
         };
     }
 

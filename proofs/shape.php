@@ -43,7 +43,7 @@ return static function() {
             );
             $assert->same(
                 [
-                    ['$', 'Unknown key foo'],
+                    ['$', 'The key foo is missing'],
                     ['bar', 'Value is not of type bool'],
                 ],
                 Shape::of('foo', Is::int())
@@ -84,7 +84,7 @@ return static function() {
 
             $assert->same(
                 [
-                    ['$', 'Unknown key foo'],
+                    ['$', 'The key foo is missing'],
                     ['bar.baz', 'Value is not of type bool'],
                 ],
                 Shape::of('foo', Is::int())

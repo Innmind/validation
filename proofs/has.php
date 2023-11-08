@@ -52,8 +52,9 @@ return static function() {
             $assert->same('$', $path);
             $assert
                 ->string($message)
-                ->startsWith('Unknown key ')
-                ->endsWith($key);
+                ->startsWith('The key ')
+                ->contains($key)
+                ->endsWith(' is missing');
         },
     );
 };
