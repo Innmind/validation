@@ -103,4 +103,33 @@ return static function() {
             );
         },
     );
+
+    yield test(
+        'Shape with optional key',
+        static function($assert) {
+            $assert->true(
+                Shape::of('foo', Is::int())
+                    ->with('bar', Is::bool())
+                    ->optional('bar')
+                    ->asPredicate()([
+                        'foo' => 42,
+                    ]),
+            );
+            $assert->same(
+                [
+                    'foo' => 42,
+                ],
+                Shape::of('foo', Is::int())
+                    ->with('bar', Is::bool())
+                    ->optional('bar')([
+                        'foo' => 42,
+                        'baz' => 'invalid',
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+        },
+    );
 };
