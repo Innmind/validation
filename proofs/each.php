@@ -52,4 +52,27 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Each::of() returns the mapped content',
+        given(
+            Set\Sequence::of(Set\Integers::any()),
+        ),
+        static function($assert, $ints) {
+            $doubles = \array_map(
+                static fn($i) => $i * 2,
+                $ints,
+            );
+
+            $assert->same(
+                $doubles,
+                Each::of(
+                    Is::int()->map(static fn($i) => $i * 2),
+                )($ints)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+        },
+    );
 };
