@@ -29,13 +29,13 @@ final class Each implements Constraint
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, list<T>> */
-        $validation = Validation::success($value);
+        $validation = Validation::success([]);
 
         /** @var mixed $element */
         foreach ($value as $element) {
             $validation = $validation->flatMap(
-                fn($value) => ($this->constraint)($element)->map(
-                    static fn() => $value,
+                fn($carry) => ($this->constraint)($element)->map(
+                    static fn($value) => \array_merge($carry, [$value]),
                 ),
             );
         }
