@@ -9,23 +9,23 @@ return static function() {
         'Instance::of()',
         given(Set\Type::any()),
         static function($assert, $other) {
-            $std = new \stdClass;
+            $std = new stdClass;
             $assert->true(
-                Instance::of(\stdClass::class)->asPredicate()($std),
+                Instance::of(stdClass::class)->asPredicate()($std),
             );
             $assert->same(
                 $std,
-                Instance::of(\stdClass::class)($std)->match(
+                Instance::of(stdClass::class)($std)->match(
                     static fn($value) => $value,
                     static fn() => null,
                 ),
             );
             $assert->false(
-                Instance::of(\stdClass::class)->asPredicate()($other),
+                Instance::of(stdClass::class)->asPredicate()($other),
             );
             $assert->same(
                 [['$', 'Value is not an instance of stdClass']],
-                Instance::of(\stdClass::class)($other)->match(
+                Instance::of(stdClass::class)($other)->match(
                     static fn() => null,
                     static fn($failures) => $failures
                         ->map(static fn($failure) => [

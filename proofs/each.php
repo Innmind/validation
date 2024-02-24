@@ -67,7 +67,7 @@ return static function() {
             $assert->same(
                 $doubles,
                 Each::of(
-                    Is::int()->map(static fn($i) => $i * 2)
+                    Is::int()->map(static fn($i) => $i * 2),
                 )($ints)->match(
                     static fn($value) => $value,
                     static fn() => null,
