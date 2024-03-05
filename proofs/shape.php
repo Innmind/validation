@@ -132,4 +132,31 @@ return static function() {
             );
         },
     );
+
+    yield test(
+        'Shape with optional key with constraint directly specified',
+        static function($assert) {
+            $assert->true(
+                Shape::of('foo', Is::int())
+                    ->optional('bar', Is::bool())
+                    ->asPredicate()([
+                        'foo' => 42,
+                    ]),
+            );
+            $assert->same(
+                [
+                    'foo' => 42,
+                ],
+                Shape::of('foo', Is::int())
+                    ->optional('bar', Is::bool())([
+                        'foo' => 42,
+                        'baz' => 'invalid',
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+        },
+    );
 };
