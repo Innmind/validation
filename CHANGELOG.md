@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- `OrConstraint::and()` was applying an _or_ constraint
+
 ## 1.2.0 - 2024-03-05
 
 ### Added

@@ -159,4 +159,20 @@ return static function() {
             );
         },
     );
+
+    yield test(
+        'Shape with optional key constraint is applied',
+        static function($assert) {
+            $assert->null(
+                Shape::of('bar', Is::int())
+                    ->optional('bar')([
+                        'bar' => 'invalid',
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+        },
+    );
 };
