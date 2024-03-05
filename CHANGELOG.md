@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 - 2024-03-05
+
+### Added
+
+- You can now do `Shape::of(...)->optional('key', $constraint)` instead of `Shape::of(...)->with('key', $constraint)->optional('key')` thus avoiding to repeat the key name
+
 ## 1.1.1 - 2024-02-24
 
 ### Fixed
