@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.3.0 - 2024-03-05
+
+### Added
+
+- `Innmind\Validation\Is::shape()` as a shortcut to `Is::array()->and(Shape::of())`
+
+### Fixed
+
+- `OrConstraint::and()` was applying an _or_ constraint
+
 ## 1.2.0 - 2024-03-05
 
 ### Added

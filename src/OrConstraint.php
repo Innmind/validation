@@ -56,9 +56,9 @@ final class OrConstraint implements Constraint
         return new self($a, $b);
     }
 
-    public function and(Constraint $constraint): self
+    public function and(Constraint $constraint): Constraint
     {
-        return new self($this, $constraint);
+        return AndConstraint::of($this, $constraint);
     }
 
     public function or(Constraint $constraint): self

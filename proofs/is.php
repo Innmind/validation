@@ -369,4 +369,35 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::shape()',
+        given(
+            Set\Composite::immutable(
+                static fn($letter, $rest) => $letter.$rest,
+                Set\Either::any(
+                    Set\Chars::lowercaseLetter(),
+                    Set\Chars::uppercaseLetter(),
+                ),
+                Set\Strings::madeOf(Set\Chars::alphanumerical()),
+            ),
+            Set\Type::any(),
+            Set\Integers::any(),
+        ),
+        static function($assert, $key, $value, $int) {
+            $assert->null(
+                Is::shape($key, Is::int())($value)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->same(
+                [$key => $int],
+                Is::shape($key, Is::int())([$key => $int])->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+        },
+    );
 };
