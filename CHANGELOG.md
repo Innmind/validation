@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Innmind\Validation\Is::shape()` as a shortcut to `Is::array()->and(Shape::of())`
+
 ### Fixed
 
 - `OrConstraint::and()` was applying an _or_ constraint

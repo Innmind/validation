@@ -369,4 +369,28 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::shape()',
+        given(
+            Set\Strings::madeOf(Set\Chars::alphanumerical())->atLeast(1),
+            Set\Type::any(),
+            Set\Integers::any(),
+        ),
+        static function($assert, $key, $value, $int) {
+            $assert->null(
+                Is::shape($key, Is::int())($value)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->same(
+                [$key => $int],
+                Is::shape($key, Is::int())([$key => $int])->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+        },
+    );
 };
