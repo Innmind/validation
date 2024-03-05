@@ -373,7 +373,14 @@ return static function() {
     yield proof(
         'Is::shape()',
         given(
-            Set\Strings::madeOf(Set\Chars::alphanumerical())->atLeast(1),
+            Set\Composite::immutable(
+                static fn($letter, $rest) => $letter.$rest,
+                Set\Either::any(
+                    Set\Chars::lowercaseLetter(),
+                    Set\Chars::uppercaseLetter(),
+                ),
+                Set\Strings::madeOf(Set\Chars::alphanumerical()),
+            ),
             Set\Type::any(),
             Set\Integers::any(),
         ),
