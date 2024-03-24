@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Is::list()->and(Each::of(Constraint))` has been shortened to `Is::list(Constraint)`
+
 ### Changed
 
 - `Is::array()->and(Is::list())` has been shortened to `Is::list()`
