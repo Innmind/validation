@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- `Is::array()->and(Is::list())` has been shortened to `Is::list()`
+
 ## 1.3.0 - 2024-03-05
 
 ### Added

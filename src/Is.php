@@ -109,12 +109,14 @@ final class Is implements Constraint
     /**
      * @psalm-pure
      *
-     * @return self<array, list>
+     * @return Constraint<mixed, list>
      */
-    public static function list(): self
+    public static function list(): Constraint
     {
         /** @var self<array, list> */
-        return new self(\array_is_list(...), 'list');
+        $list = new self(\array_is_list(...), 'list');
+
+        return self::array()->and($list);
     }
 
     /**
