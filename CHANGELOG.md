@@ -9,6 +9,7 @@
 ### Changed
 
 - `Is::array()->and(Is::list())` has been shortened to `Is::list()`
+- `Is::array()->and(Shape::of(...$args))` has been shortened to `Shape::of(...$args)`
 
 ## 1.3.0 - 2024-03-05
 

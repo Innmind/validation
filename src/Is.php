@@ -132,12 +132,10 @@ final class Is implements Constraint
      * @psalm-pure
      *
      * @param non-empty-string $key
-     *
-     * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>>
      */
-    public static function shape(string $key, Constraint $constraint): Constraint
+    public static function shape(string $key, Constraint $constraint): Shape
     {
-        return self::array()->and(Shape::of($key, $constraint));
+        return Shape::of($key, $constraint);
     }
 
     public function and(Constraint $constraint): Constraint
