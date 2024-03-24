@@ -109,24 +109,33 @@ final class Is implements Constraint
     /**
      * @psalm-pure
      *
-     * @return self<array, list>
+     * @template E
+     *
+     * @param Constraint<mixed, E> $each
+     *
+     * @return Constraint<mixed, list<E>>
      */
-    public static function list(): self
+    public static function list(Constraint $each = null): Constraint
     {
-        /** @var self<array, list> */
-        return new self(\array_is_list(...), 'list');
+        /** @var self<array, list<mixed>> */
+        $list = new self(\array_is_list(...), 'list');
+
+        $constraint = self::array()->and($list);
+
+        return match ($each) {
+            null => $constraint,
+            default => $constraint->and(Each::of($each)),
+        };
     }
 
     /**
      * @psalm-pure
      *
      * @param non-empty-string $key
-     *
-     * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>>
      */
-    public static function shape(string $key, Constraint $constraint): Constraint
+    public static function shape(string $key, Constraint $constraint): Shape
     {
-        return self::array()->and(Shape::of($key, $constraint));
+        return Shape::of($key, $constraint);
     }
 
     public function and(Constraint $constraint): Constraint

@@ -9,7 +9,7 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Constraint<array, non-empty-array<non-empty-string, mixed>>
+ * @implements Constraint<mixed, non-empty-array<non-empty-string, mixed>>
  * @psalm-immutable
  */
 final class Shape implements Constraint
@@ -31,43 +31,7 @@ final class Shape implements Constraint
 
     public function __invoke(mixed $value): Validation
     {
-        $optional = new \stdClass;
-        /** @var Validation<Failure, non-empty-array<non-empty-string, mixed>> */
-        $validation = Validation::success([]);
-
-        foreach ($this->constraints as $key => $constraint) {
-            $keyValidation = Has::key($key);
-
-            if (\in_array($key, $this->optional, true)) {
-                /** @psalm-suppress MixedArgumentTypeCoercion */
-                $keyValidation = $keyValidation->or(Of::callable(
-                    static fn() => Validation::success($optional),
-                ));
-            }
-
-            $ofType = Of::callable(
-                static fn($value) => match ($value) {
-                    $optional => Validation::success($optional),
-                    default => $constraint($value)->mapFailures(
-                        static fn($failure) => $failure->under($key),
-                    ),
-                },
-            );
-
-            $validation = $validation->and(
-                $keyValidation->and($ofType)($value),
-                static function($array, $value) use ($key, $optional) {
-                    if ($value !== $optional) {
-                        /** @psalm-suppress MixedAssignment */
-                        $array[$key] = $value;
-                    }
-
-                    return $array;
-                },
-            );
-        }
-
-        return $validation;
+        return Is::array()($value)->flatMap($this->validate(...));
     }
 
     /**
@@ -125,5 +89,49 @@ final class Shape implements Constraint
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
+    }
+
+    /**
+     * @return Validation<Failure, non-empty-array<non-empty-string, mixed>>
+     */
+    private function validate(array $value): Validation
+    {
+        $optional = new \stdClass;
+        /** @var Validation<Failure, non-empty-array<non-empty-string, mixed>> */
+        $validation = Validation::success([]);
+
+        foreach ($this->constraints as $key => $constraint) {
+            $keyValidation = Has::key($key);
+
+            if (\in_array($key, $this->optional, true)) {
+                /** @psalm-suppress MixedArgumentTypeCoercion */
+                $keyValidation = $keyValidation->or(Of::callable(
+                    static fn() => Validation::success($optional),
+                ));
+            }
+
+            $ofType = Of::callable(
+                static fn($value) => match ($value) {
+                    $optional => Validation::success($optional),
+                    default => $constraint($value)->mapFailures(
+                        static fn($failure) => $failure->under($key),
+                    ),
+                },
+            );
+
+            $validation = $validation->and(
+                $keyValidation->and($ofType)($value),
+                static function($array, $value) use ($key, $optional) {
+                    if ($value !== $optional) {
+                        /** @psalm-suppress MixedAssignment */
+                        $array[$key] = $value;
+                    }
+
+                    return $array;
+                },
+            );
+        }
+
+        return $validation;
     }
 }

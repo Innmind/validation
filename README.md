@@ -45,11 +45,11 @@ $validate = Shape::of('id', Is::int())
     ->with('username', Is::string())
     ->with(
         'addresses',
-        Is::array()
-            ->and(Is::list())
-            ->and(Each::of(Is::string())->map(
+        Is::list(
+            Is::string()->map(
                 static fn(string $address) => new YourModel($address),
-            ))
+            )
+        )
     );
 $result = $validate($valid)->match(
     static fn(array $value) => $value,

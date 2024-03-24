@@ -371,6 +371,45 @@ return static function() {
     );
 
     yield proof(
+        'Is::list() with inner type',
+        given(
+            Set\Sequence::of(
+                Set\Strings::any(),
+            )->atLeast(1),
+            Set\Sequence::of(
+                Set\Integers::any(),
+            )->atLeast(1),
+        ),
+        static function($assert, $strings, $ints) {
+            $assert->true(
+                Is::list(Is::string())->asPredicate()($strings),
+            );
+            $assert->same(
+                $strings,
+                Is::list(Is::string())($strings)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                Is::list(Is::string())->asPredicate()($ints),
+            );
+            $assert->same(
+                [['$', 'Value is not of type string']],
+                Is::list(Is::string())($ints)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::shape()',
         given(
             Set\Composite::immutable(

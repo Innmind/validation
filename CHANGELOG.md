@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.0 - 2024-03-24
+
+### Added
+
+- `Is::list()->and(Each::of(Constraint))` has been shortened to `Is::list(Constraint)`
+
+### Changed
+
+- `Is::array()->and(Is::list())` has been shortened to `Is::list()`
+- `Is::array()->and(Shape::of(...$args))` has been shortened to `Shape::of(...$args)`
+
 ## 1.3.0 - 2024-03-05
 
 ### Added
