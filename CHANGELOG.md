@@ -5,6 +5,7 @@
 ### Added
 
 - `Is::associativeArray()`
+- `Has::key()->withFailure()` to change the failure message
 
 ## 1.4.0 - 2024-03-24
 
