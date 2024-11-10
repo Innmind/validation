@@ -116,16 +116,6 @@ final class Is implements Constraint
     }
 
     /**
-     * @param non-empty-string $message
-     *
-     * @return self<T, U>
-     */
-    public function withFailure(string $message): self
-    {
-        return new self($this->assert, $this->type, $message);
-    }
-
-    /**
      * @psalm-pure
      *
      * @template E
@@ -170,6 +160,16 @@ final class Is implements Constraint
     public static function associativeArray(Constraint $key, Constraint $value): AssociativeArray
     {
         return AssociativeArray::of($key, $value);
+    }
+
+    /**
+     * @param non-empty-string $message
+     *
+     * @return self<T, U>
+     */
+    public function withFailure(string $message): self
+    {
+        return new self($this->assert, $this->type, $message);
     }
 
     public function and(Constraint $constraint): Constraint
