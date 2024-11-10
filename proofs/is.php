@@ -52,6 +52,38 @@ return static function() {
     );
 
     yield proof(
+        'Is::string()->withFailure()',
+        given(
+            Set\Strings::atLeast(1),
+            Set\Either::any(
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new stdClass,
+                ),
+                Set\Sequence::of(Set\Strings::any()),
+            ),
+        ),
+        static function($assert, $message, $other) {
+            $assert->same(
+                [['$', $message]],
+                Is::string()->withFailure($message)($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::int()',
         given(
             Set\Integers::any(),

@@ -20,15 +20,22 @@ final class Is implements Constraint
     private $assert;
     /** @var non-empty-string */
     private string $type;
+    /** @var ?non-empty-string */
+    private ?string $message;
 
     /**
      * @param pure-callable(T): bool $assert
      * @param non-empty-string $type
+     * @param ?non-empty-string $message
      */
-    private function __construct(callable $assert, string $type)
-    {
+    private function __construct(
+        callable $assert,
+        string $type,
+        ?string $message = null,
+    ) {
         $this->assert = $assert;
         $this->type = $type;
+        $this->message = $message;
     }
 
     public function __invoke(mixed $value): Validation
@@ -36,7 +43,9 @@ final class Is implements Constraint
         /** @var Validation<Failure, U> */
         return match (($this->assert)($value)) {
             true => Validation::success($value),
-            false => Validation::fail(Failure::of("Value is not of type {$this->type}")),
+            false => Validation::fail(Failure::of(
+                $this->message ?? "Value is not of type {$this->type}",
+            )),
         };
     }
 
@@ -104,6 +113,16 @@ final class Is implements Constraint
     {
         /** @var self<mixed, null> */
         return new self(\is_null(...), 'null');
+    }
+
+    /**
+     * @param non-empty-string $message
+     *
+     * @return self<T, U>
+     */
+    public function withFailure(string $message): self
+    {
+        return new self($this->assert, $this->type, $message);
     }
 
     /**
