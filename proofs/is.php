@@ -52,6 +52,38 @@ return static function() {
     );
 
     yield proof(
+        'Is::string()->withFailure()',
+        given(
+            Set\Strings::atLeast(1),
+            Set\Either::any(
+                Set\Integers::any(),
+                Set\RealNumbers::any(),
+                Set\Elements::of(
+                    true,
+                    false,
+                    null,
+                    new stdClass,
+                ),
+                Set\Sequence::of(Set\Strings::any()),
+            ),
+        ),
+        static function($assert, $message, $other) {
+            $assert->same(
+                [['$', $message]],
+                Is::string()->withFailure($message)($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::int()',
         given(
             Set\Integers::any(),
@@ -436,6 +468,39 @@ return static function() {
                 Is::shape($key, Is::int())([$key => $int])->match(
                     static fn($value) => $value,
                     static fn() => null,
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::shape()->withKeyFailure()',
+        given(
+            Set\Composite::immutable(
+                static fn($letter, $rest) => $letter.$rest,
+                Set\Either::any(
+                    Set\Chars::lowercaseLetter(),
+                    Set\Chars::uppercaseLetter(),
+                ),
+                Set\Strings::madeOf(Set\Chars::alphanumerical()),
+            ),
+            Set\Strings::atLeast(1),
+        ),
+        static function($assert, $key, $expected) {
+            $assert->same(
+                [['$', $expected]],
+                Is::shape($key, Is::int())->withKeyFailure(static function($in) use ($assert, $key, $expected) {
+                    $assert->same($key, $in);
+
+                    return $expected;
+                })([])->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
                 ),
             );
         },

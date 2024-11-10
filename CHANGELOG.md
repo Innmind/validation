@@ -5,6 +5,10 @@
 ### Added
 
 - `Is::associativeArray()`
+- `Has::key()->withFailure()` to change the failure message
+- `Is::string|int|float|array|bool|null()->withFailure()` to change the failure message
+- `PointInTime::ofFormat()->withFailure()` to change the failure message
+- `Is::shape()->withKeyFailure()` to change the failure message for when a key doesn't exist
 
 ## 1.4.0 - 2024-03-24
 

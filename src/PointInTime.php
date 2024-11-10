@@ -21,18 +21,29 @@ final class PointInTime implements Constraint
 {
     private Clock $clock;
     private Format $format;
+    /** @var ?non-empty-string */
+    private ?string $message;
 
-    private function __construct(Clock $clock, Format $format)
-    {
+    /**
+     * @param ?non-empty-string $message
+     */
+    private function __construct(
+        Clock $clock,
+        Format $format,
+        ?string $message = null,
+    ) {
         $this->clock = $clock;
         $this->format = $format;
+        $this->message = $message;
     }
 
     public function __invoke(mixed $value): Validation
     {
         return $this->clock->at($value, $this->format)->match(
             static fn($point) => Validation::success($point),
-            fn() => Validation::fail(Failure::of("Value is not a date of format {$this->format->toString()}")),
+            fn() => Validation::fail(Failure::of(
+                $this->message ?? "Value is not a date of format {$this->format->toString()}",
+            )),
         );
     }
 
@@ -42,6 +53,14 @@ final class PointInTime implements Constraint
     public static function ofFormat(Clock $clock, Format $format): self
     {
         return new self($clock, $format);
+    }
+
+    /**
+     * @param non-empty-string $message
+     */
+    public function withFailure(string $message): self
+    {
+        return new self($this->clock, $this->format, $message);
     }
 
     public function and(Constraint $constraint): Constraint

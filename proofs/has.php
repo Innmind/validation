@@ -57,4 +57,44 @@ return static function() {
                 ->endsWith(' is missing');
         },
     );
+
+    yield proof(
+        'Has::key()->withFailure()',
+        given(
+            Set\Composite::immutable(
+                static fn($keys, $values) => \array_combine(
+                    \array_slice($keys, 0, \min(\count($keys), \count($values))),
+                    \array_slice($values, 0, \min(\count($keys), \count($values))),
+                ),
+                Set\Sequence::of(Set\Either::any(
+                    Set\Integers::any(),
+                    Set\Strings::any(),
+                ))->atLeast(1),
+                Set\Sequence::of(Set\Type::any())->atLeast(1),
+            ),
+            Set\Strings::atLeast(1),
+            Set\Strings::atLeast(1),
+        ),
+        static function($assert, $array, $key, $expected) {
+            unset($array[$key]);
+            $validation = Has::key($key)->withFailure(
+                static function($in) use ($assert, $key, $expected) {
+                    $assert->same($key, $in);
+
+                    return $expected;
+                },
+            );
+
+            [[$path, $message]] = $validation($array)->match(
+                static fn() => null,
+                static fn($failures) => $failures
+                    ->map(static fn($failure) => [
+                        $failure->path()->toString(),
+                        $failure->message(),
+                    ])
+                    ->toList(),
+            );
+            $assert->same($expected, $message);
+        },
+    );
 };
