@@ -18,15 +18,22 @@ final class Shape implements Constraint
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
+    /** @var ?callable(non-empty-string): non-empty-string */
+    private $message;
 
     /**
      * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
+     * @param ?callable(non-empty-string): non-empty-string $message
      */
-    private function __construct(array $constraints, array $optional)
-    {
+    private function __construct(
+        array $constraints,
+        array $optional,
+        ?callable $message = null,
+    ) {
         $this->constraints = $constraints;
         $this->optional = $optional;
+        $this->message = $message;
     }
 
     public function __invoke(mixed $value): Validation
@@ -52,7 +59,7 @@ final class Shape implements Constraint
         $constraints = $this->constraints;
         $constraints[$key] = $constraint;
 
-        return new self($constraints, $this->optional);
+        return new self($constraints, $this->optional, $this->message);
     }
 
     /**
@@ -68,7 +75,15 @@ final class Shape implements Constraint
             $constraints[$key] = $constraint;
         }
 
-        return new self($constraints, $optional);
+        return new self($constraints, $optional, $this->message);
+    }
+
+    /**
+     * @param callable(non-empty-string): non-empty-string $message
+     */
+    public function withKeyFailure(callable $message): self
+    {
+        return new self($this->constraints, $this->optional, $message);
     }
 
     public function and(Constraint $constraint): Constraint
@@ -102,6 +117,10 @@ final class Shape implements Constraint
 
         foreach ($this->constraints as $key => $constraint) {
             $keyValidation = Has::key($key);
+
+            if (!\is_null($this->message)) {
+                $keyValidation = $keyValidation->withFailure($this->message);
+            }
 
             if (\in_array($key, $this->optional, true)) {
                 /** @psalm-suppress MixedArgumentTypeCoercion */

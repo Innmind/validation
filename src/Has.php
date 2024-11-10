@@ -16,20 +16,27 @@ final class Has implements Constraint
 {
     /** @var non-empty-string */
     private string $key;
+    /** @var callable(non-empty-string): non-empty-string */
+    private $message;
 
     /**
      * @param non-empty-string $key
+     * @param callable(non-empty-string): non-empty-string $message
      */
-    private function __construct(string $key)
+    private function __construct(string $key, callable $message)
     {
         $this->key = $key;
+        $this->message = $message;
     }
 
     public function __invoke(mixed $value): Validation
     {
+        /** @psalm-suppress ImpureFunctionCall */
         return match (\array_key_exists($this->key, $value)) {
             true => Validation::success($value[$this->key]),
-            false => Validation::fail(Failure::of("The key {$this->key} is missing")),
+            false => Validation::fail(Failure::of(
+                ($this->message)($this->key),
+            )),
         };
     }
 
@@ -42,7 +49,18 @@ final class Has implements Constraint
      */
     public static function key(string $key): self
     {
-        return new self($key);
+        return new self(
+            $key,
+            static fn($key) => "The key $key is missing",
+        );
+    }
+
+    /**
+     * @param callable(non-empty-string): non-empty-string $message The input is the key
+     */
+    public function withFailure(callable $message): self
+    {
+        return new self($this->key, $message);
     }
 
     public function and(Constraint $constraint): Constraint

@@ -50,4 +50,27 @@ return static function() {
                 ->endsWith($format->toString());
         },
     );
+
+    yield proof(
+        'PointInTime::ofFormat()->withFailure()',
+        given(
+            Set\Strings::atLeast(1),
+            Set\Strings::any(),
+        ),
+        static function($assert, $expected, $random) {
+            $format = new ISO8601;
+            $clock = new Clock;
+
+            [[$path, $message]] = PointInTime::ofFormat($clock, $format)->withFailure($expected)($random)->match(
+                static fn() => null,
+                static fn($failures) => $failures
+                    ->map(static fn($failure) => [
+                        $failure->path()->toString(),
+                        $failure->message(),
+                    ])
+                    ->toList(),
+            );
+            $assert->same($expected, $message);
+        },
+    );
 };
