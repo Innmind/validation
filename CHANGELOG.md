@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Is::associativeArray()`
+
 ## 1.4.0 - 2024-03-24
 
 ### Added

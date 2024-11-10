@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use Innmind\Validation\Is;
+use Innmind\Immutable\Str;
 use Innmind\BlackBox\Set;
 
 return static function() {
@@ -435,6 +436,116 @@ return static function() {
                 Is::shape($key, Is::int())([$key => $int])->match(
                     static fn($value) => $value,
                     static fn() => null,
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::associativeArray()',
+        given(
+            Set\Sequence::of(Set\Strings::any()->filter(
+                static fn($string) => !\is_numeric($string), // to avoid implicit convertions to ints
+            ))->map(static fn($keys) => \array_unique($keys)),
+            Set\Sequence::of(Set\Integers::any()),
+            Set\Integers::any(),
+            Set\Strings::atLeast(1)->filter(
+                static fn($string) => !\is_numeric($string), // to avoid implicit convertions to ints
+            ),
+            Set\Either::any(
+                Set\Integers::any(),
+                Set\Strings::any(),
+                Set\Elements::of(true, false, null, new stdClass),
+                Set\RealNumbers::any(),
+            ),
+        ),
+        static function($assert, $keys, $values, $integer, $string, $random) {
+            // `->map`s allow to verify the constraint use the values parsed
+            // from the constraint instead of the initial values from the array
+            $validation = Is::associativeArray(
+                Is::string()->map(Str::of(...)),
+                Is::int()->map(static fn($i) => $i + 1),
+            );
+            $validArray = [];
+            $validPairs = [];
+
+            foreach ($keys as $index => $key) {
+                $validArray[$key] = $values[$index] ?? 0;
+                $validPairs[] = [$key, $values[$index] ?? 0];
+            }
+
+            $assert->same(
+                $validPairs,
+                $validation($validArray)->match(
+                    static fn($map) => $map
+                        ->toSequence()
+                        ->map(static fn($pair) => [
+                            $pair->key()->toString(),
+                            $pair->value() - 1,
+                        ])
+                        ->toList(),
+                    static fn() => null,
+                ),
+            );
+
+            $invalidArray = $validArray;
+            $invalidArray[$integer] = $integer;
+
+            $assert->same(
+                [["key($integer)", 'Value is not of type string']],
+                $validation($invalidArray)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+
+            unset($invalidArray[$integer]);
+            $invalidArray[$string] = $string;
+
+            $assert->same(
+                [[$string, 'Value is not of type int']],
+                $validation($invalidArray)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+
+            unset($invalidArray[$string]);
+            $invalidArray[''] = $string;
+
+            $assert->same(
+                [["''", 'Value is not of type int']],
+                $validation($invalidArray)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+
+            $assert->same(
+                [['$', 'Value is not of type array']],
+                $validation($random)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
                 ),
             );
         },

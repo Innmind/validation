@@ -138,6 +138,21 @@ final class Is implements Constraint
         return Shape::of($key, $constraint);
     }
 
+    /**
+     * @psalm-pure
+     * @template K
+     * @template V
+     *
+     * @param Constraint<mixed, K> $key
+     * @param Constraint<mixed, V> $value
+     *
+     * @return AssociativeArray<K, V>
+     */
+    public static function associativeArray(Constraint $key, Constraint $value): AssociativeArray
+    {
+        return AssociativeArray::of($key, $value);
+    }
+
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
