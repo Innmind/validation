@@ -56,21 +56,45 @@ final class OrConstraint implements Constraint
         return new self($a, $b);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<B|C, T> $constraint
+     *
+     * @return Constraint<A, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<A, T> $constraint
+     *
+     * @return self<A, B|C, T>
+     */
     public function or(Constraint $constraint): self
     {
         return new self($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(B|C): T $map
+     *
+     * @return Constraint<A, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<B|C>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

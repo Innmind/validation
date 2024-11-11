@@ -52,21 +52,45 @@ final class Instance implements Constraint
         return new self(Predicate\Instance::of($class), $class);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<T, V> $constraint
+     *
+     * @return Constraint<mixed, V>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<mixed, V> $constraint
+     *
+     * @return Constraint<mixed, T|V>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param pure-callable(T): V $map
+     *
+     * @return Constraint<mixed, V>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return Predicate<T>
+     */
     public function asPredicate(): Predicate
     {
         return $this->assert;

@@ -56,21 +56,45 @@ final class Each implements Constraint
         return new self($constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<list<T>, V> $constraint
+     *
+     * @return Constraint<list, V>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<list, V> $constraint
+     *
+     * @return Constraint<list, list<T>|V>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param pure-callable(list<T>): V $map
+     *
+     * @return Constraint<list, V>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<list<T>>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

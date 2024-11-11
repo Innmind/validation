@@ -63,21 +63,45 @@ final class Has implements Constraint
         return new self($this->key, $message);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<mixed, T> $constraint
+     *
+     * @return Constraint<array, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<array, T> $constraint
+     *
+     * @return Constraint<array, mixed|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(mixed): T $map
+     *
+     * @return Constraint<array, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<mixed>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
