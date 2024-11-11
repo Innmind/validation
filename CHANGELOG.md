@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.6.1 - 2024-11-11
+
+### Fixed
+
+- Psalm losing the types of contraints when composing them via `and`, `or`, `map` and `asPredicate`
+
 ## 1.6.0 - 2024-11-11
 
 ### Added

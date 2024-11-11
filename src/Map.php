@@ -53,21 +53,45 @@ final class Map implements Constraint
         return new self($constraint, $map);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<T, V> $constraint
+     *
+     * @return Constraint<I, V>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<I, V> $constraint
+     *
+     * @return Constraint<I, T|V>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param pure-callable(T): V $map
+     *
+     * @return self<I, T, V>
+     */
     public function map(callable $map): self
     {
         return new self($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<T>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

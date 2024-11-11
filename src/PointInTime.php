@@ -63,21 +63,45 @@ final class PointInTime implements Constraint
         return new self($this->clock, $this->format, $message);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<PointInTimeInterface, T> $constraint
+     *
+     * @return Constraint<string, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<string, T> $constraint
+     *
+     * @return Constraint<string, PointInTimeInterface|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(PointInTimeInterface): T $map
+     *
+     * @return Constraint<string, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<PointInTimeInterface>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

@@ -192,21 +192,45 @@ final class Is implements Constraint
         return new self($this->assert, $this->type, $message);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<U, V> $constraint
+     *
+     * @return Constraint<T, V>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param Constraint<T, V> $constraint
+     *
+     * @return Constraint<T, U|V>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template V
+     *
+     * @param pure-callable(U): V $map
+     *
+     * @return Constraint<T, V>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<U>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

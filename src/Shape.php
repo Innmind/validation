@@ -160,21 +160,45 @@ final class Shape implements Constraint
         );
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<non-empty-array<non-empty-string, mixed>, T> $constraint
+     *
+     * @return Constraint<mixed, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<mixed, T> $constraint
+     *
+     * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(non-empty-array<non-empty-string, mixed>): T $map
+     *
+     * @return Constraint<mixed, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<non-empty-array<non-empty-string, mixed>>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

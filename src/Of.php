@@ -46,21 +46,45 @@ final class Of implements Constraint
         return new self($assert);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<B, T> $constraint
+     *
+     * @return Constraint<A, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<A, T> $constraint
+     *
+     * @return Constraint<A, B|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(B): T $map
+     *
+     * @return Constraint<A, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<B>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
