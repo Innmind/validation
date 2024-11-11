@@ -5,6 +5,7 @@ namespace Innmind\Validation;
 
 use Innmind\Immutable\{
     Validation,
+    Maybe,
     Predicate as PredicateInterface,
 };
 
@@ -160,6 +161,25 @@ final class Is implements Constraint
     public static function associativeArray(Constraint $key, Constraint $value): AssociativeArray
     {
         return AssociativeArray::of($key, $value);
+    }
+
+    /**
+     * @psalm-pure
+     * @template V
+     *
+     * @param ?non-empty-string $message
+     *
+     * @return Constraint<Maybe<V>, V>
+     */
+    public static function just(?string $message = null): Constraint
+    {
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        return Of::callable(static fn(Maybe $value) => $value->match(
+            Validation::success(...),
+            static fn() => Validation::fail(Failure::of(
+                $message ?? 'No value was provided',
+            )),
+        ));
     }
 
     /**
