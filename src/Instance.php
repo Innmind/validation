@@ -79,7 +79,7 @@ final class Instance implements Constraint
     /**
      * @template V
      *
-     * @param pure-callable(T): V $map
+     * @param callable(T): V $map
      *
      * @return Constraint<mixed, V>
      */

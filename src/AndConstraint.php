@@ -83,7 +83,7 @@ final class AndConstraint implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(C): T $map
+     * @param callable(C): T $map
      *
      * @return Constraint<A, T>
      */
