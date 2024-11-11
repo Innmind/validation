@@ -2,7 +2,10 @@
 declare(strict_types = 1);
 
 use Innmind\Validation\Is;
-use Innmind\Immutable\Str;
+use Innmind\Immutable\{
+    Str,
+    Maybe,
+};
 use Innmind\BlackBox\Set;
 
 return static function() {
@@ -612,6 +615,31 @@ return static function() {
                         ])
                         ->toList(),
                 ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::just()',
+        given(Set\Integers::any()),
+        static function($assert, $value) {
+            $assert->same(
+                $value,
+                Is::int()
+                    ->map(Maybe::just(...))
+                    ->and(Is::just())($value)->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+
+            $assert->false(
+                Is::null()
+                    ->map(Maybe::of(...))
+                    ->and(Is::just())(null)->match(
+                        static fn($value) => $value,
+                        static fn() => false,
+                    ),
             );
         },
     );
