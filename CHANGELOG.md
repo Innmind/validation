@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Shape::rename()` to rename a key in the output array
+- `Shape::default()` to specify a default value when an optional key is not set
+
 ## 1.5.0 - 2024-11-10
 
 ### Added

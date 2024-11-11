@@ -134,6 +134,28 @@ return static function() {
         },
     );
 
+    yield proof(
+        'Shape with optional key default',
+        given(Set\Type::any()),
+        static function($assert, $default) {
+            $assert->same(
+                [
+                    'foo' => 42,
+                    'bar' => $default,
+                ],
+                Shape::of('foo', Is::int())
+                    ->optional('bar', Is::bool())
+                    ->default('bar', $default)([
+                        'foo' => 42,
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+        },
+    );
+
     yield test(
         'Shape with optional key with constraint directly specified',
         static function($assert) {
@@ -203,6 +225,26 @@ return static function() {
                                 $failure->message(),
                             ])
                             ->toList(),
+                    ),
+            );
+        },
+    );
+
+    yield test(
+        'Shape rename key',
+        static function($assert) {
+            $assert->same(
+                [
+                    'bar' => 42,
+                ],
+                Shape::of('foo', Is::int())
+                    ->rename('foo', 'bar')([
+                        'foo' => 42,
+                        'bar' => true,
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
                     ),
             );
         },
