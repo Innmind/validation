@@ -83,7 +83,7 @@ final class Each implements Constraint
     /**
      * @template V
      *
-     * @param pure-callable(list<T>): V $map
+     * @param callable(list<T>): V $map
      *
      * @return Constraint<list, V>
      */

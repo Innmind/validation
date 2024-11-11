@@ -219,7 +219,7 @@ final class Is implements Constraint
     /**
      * @template V
      *
-     * @param pure-callable(U): V $map
+     * @param callable(U): V $map
      *
      * @return Constraint<T, V>
      */

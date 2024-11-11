@@ -90,7 +90,7 @@ final class Has implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(mixed): T $map
+     * @param callable(mixed): T $map
      *
      * @return Constraint<array, T>
      */

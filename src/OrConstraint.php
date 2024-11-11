@@ -83,7 +83,7 @@ final class OrConstraint implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(B|C): T $map
+     * @param callable(B|C): T $map
      *
      * @return Constraint<A, T>
      */
