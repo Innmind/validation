@@ -207,4 +207,24 @@ return static function() {
             );
         },
     );
+
+    yield test(
+        'Shape rename key',
+        static function($assert) {
+            $assert->same(
+                [
+                    'bar' => 42,
+                ],
+                Shape::of('foo', Is::int())
+                    ->rename('foo', 'bar')([
+                        'foo' => 42,
+                        'bar' => true,
+                    ])
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+        },
+    );
 };

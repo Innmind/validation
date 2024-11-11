@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Shape::rename()` to rename a key in the output array
+
 ## 1.5.0 - 2024-11-10
 
 ### Added

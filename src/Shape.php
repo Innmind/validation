@@ -18,21 +18,26 @@ final class Shape implements Constraint
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
+    /** @var array<non-empty-string, non-empty-string> */
+    private array $rename;
     /** @var ?callable(non-empty-string): non-empty-string */
     private $message;
 
     /**
      * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
+     * @param array<non-empty-string, non-empty-string> $rename
      * @param ?callable(non-empty-string): non-empty-string $message
      */
     private function __construct(
         array $constraints,
         array $optional,
-        ?callable $message = null,
+        array $rename,
+        ?callable $message,
     ) {
         $this->constraints = $constraints;
         $this->optional = $optional;
+        $this->rename = $rename;
         $this->message = $message;
     }
 
@@ -48,7 +53,12 @@ final class Shape implements Constraint
      */
     public static function of(string $key, Constraint $constraint): self
     {
-        return new self([$key => $constraint], []);
+        return new self(
+            [$key => $constraint],
+            [],
+            [],
+            null,
+        );
     }
 
     /**
@@ -59,7 +69,12 @@ final class Shape implements Constraint
         $constraints = $this->constraints;
         $constraints[$key] = $constraint;
 
-        return new self($constraints, $this->optional, $this->message);
+        return new self(
+            $constraints,
+            $this->optional,
+            $this->rename,
+            $this->message,
+        );
     }
 
     /**
@@ -75,7 +90,29 @@ final class Shape implements Constraint
             $constraints[$key] = $constraint;
         }
 
-        return new self($constraints, $optional, $this->message);
+        return new self(
+            $constraints,
+            $optional,
+            $this->rename,
+            $this->message,
+        );
+    }
+
+    /**
+     * @param non-empty-string $from
+     * @param non-empty-string $to
+     */
+    public function rename(string $from, string $to): self
+    {
+        $rename = $this->rename;
+        $rename[$from] = $to;
+
+        return new self(
+            $this->constraints,
+            $this->optional,
+            $rename,
+            $this->message,
+        );
     }
 
     /**
@@ -83,7 +120,12 @@ final class Shape implements Constraint
      */
     public function withKeyFailure(callable $message): self
     {
-        return new self($this->constraints, $this->optional, $message);
+        return new self(
+            $this->constraints,
+            $this->optional,
+            $this->rename,
+            $message,
+        );
     }
 
     public function and(Constraint $constraint): Constraint
@@ -140,10 +182,11 @@ final class Shape implements Constraint
 
             $validation = $validation->and(
                 $keyValidation->and($ofType)($value),
-                static function($array, $value) use ($key, $optional) {
+                function($array, $value) use ($key, $optional) {
                     if ($value !== $optional) {
+                        $concreteKey = $this->rename[$key] ?? $key;
                         /** @psalm-suppress MixedAssignment */
-                        $array[$key] = $value;
+                        $array[$concreteKey] = $value;
                     }
 
                     return $array;
