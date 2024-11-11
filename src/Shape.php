@@ -18,6 +18,8 @@ final class Shape implements Constraint
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
+    /** @var array<non-empty-string, mixed> */
+    private array $defaults;
     /** @var array<non-empty-string, non-empty-string> */
     private array $rename;
     /** @var ?callable(non-empty-string): non-empty-string */
@@ -26,17 +28,20 @@ final class Shape implements Constraint
     /**
      * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
+     * @param array<non-empty-string, mixed> $defaults
      * @param array<non-empty-string, non-empty-string> $rename
      * @param ?callable(non-empty-string): non-empty-string $message
      */
     private function __construct(
         array $constraints,
         array $optional,
+        array $defaults,
         array $rename,
         ?callable $message,
     ) {
         $this->constraints = $constraints;
         $this->optional = $optional;
+        $this->defaults = $defaults;
         $this->rename = $rename;
         $this->message = $message;
     }
@@ -57,6 +62,7 @@ final class Shape implements Constraint
             [$key => $constraint],
             [],
             [],
+            [],
             null,
         );
     }
@@ -72,6 +78,7 @@ final class Shape implements Constraint
         return new self(
             $constraints,
             $this->optional,
+            $this->defaults,
             $this->rename,
             $this->message,
         );
@@ -93,6 +100,29 @@ final class Shape implements Constraint
         return new self(
             $constraints,
             $optional,
+            $this->defaults,
+            $this->rename,
+            $this->message,
+        );
+    }
+
+    /**
+     * @param non-empty-string $key
+     */
+    public function default(string $key, mixed $value): self
+    {
+        if (!\in_array($key, $this->optional, true)) {
+            throw new \LogicException("No optional key $key defined");
+        }
+
+        $defaults = $this->defaults;
+        /** @psalm-suppress MixedAssignment */
+        $defaults[$key] = $value;
+
+        return new self(
+            $this->constraints,
+            $this->optional,
+            $defaults,
             $this->rename,
             $this->message,
         );
@@ -110,6 +140,7 @@ final class Shape implements Constraint
         return new self(
             $this->constraints,
             $this->optional,
+            $this->defaults,
             $rename,
             $this->message,
         );
@@ -123,6 +154,7 @@ final class Shape implements Constraint
         return new self(
             $this->constraints,
             $this->optional,
+            $this->defaults,
             $this->rename,
             $message,
         );
@@ -183,10 +215,14 @@ final class Shape implements Constraint
             $validation = $validation->and(
                 $keyValidation->and($ofType)($value),
                 function($array, $value) use ($key, $optional) {
+                    $concreteKey = $this->rename[$key] ?? $key;
+
                     if ($value !== $optional) {
-                        $concreteKey = $this->rename[$key] ?? $key;
                         /** @psalm-suppress MixedAssignment */
                         $array[$concreteKey] = $value;
+                    } else if (\array_key_exists($key, $this->defaults)) {
+                        /** @psalm-suppress MixedAssignment */
+                        $array[$concreteKey] = $this->defaults[$key];
                     }
 
                     return $array;
