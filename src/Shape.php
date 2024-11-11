@@ -187,7 +187,7 @@ final class Shape implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(non-empty-array<non-empty-string, mixed>): T $map
+     * @param callable(non-empty-array<non-empty-string, mixed>): T $map
      *
      * @return Constraint<mixed, T>
      */

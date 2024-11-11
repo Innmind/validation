@@ -73,7 +73,7 @@ final class Of implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(B): T $map
+     * @param callable(B): T $map
      *
      * @return Constraint<A, T>
      */

@@ -19,12 +19,12 @@ final class Map implements Constraint
 {
     /** @var Constraint<I, O> */
     private Constraint $constraint;
-    /** @var pure-callable(O): T */
+    /** @var callable(O): T */
     private $map;
 
     /**
      * @param Constraint<I, O> $constraint
-     * @param pure-callable(O): T $map
+     * @param callable(O): T $map
      */
     private function __construct(Constraint $constraint, callable $map)
     {
@@ -34,6 +34,7 @@ final class Map implements Constraint
 
     public function __invoke(mixed $value): Validation
     {
+        /** @psalm-suppress ImpureFunctionCall */
         return ($this->constraint)($value)->map($this->map);
     }
 
@@ -44,7 +45,7 @@ final class Map implements Constraint
      * @psalm-pure
      *
      * @param Constraint<A, B> $constraint
-     * @param pure-callable(B): C $map
+     * @param callable(B): C $map
      *
      * @return self<A, B, C>
      */
@@ -80,7 +81,7 @@ final class Map implements Constraint
     /**
      * @template V
      *
-     * @param pure-callable(T): V $map
+     * @param callable(T): V $map
      *
      * @return self<I, T, V>
      */

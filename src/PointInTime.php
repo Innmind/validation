@@ -90,7 +90,7 @@ final class PointInTime implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(PointInTimeInterface): T $map
+     * @param callable(PointInTimeInterface): T $map
      *
      * @return Constraint<string, T>
      */

@@ -42,7 +42,7 @@ interface Constraint
     /**
      * @template T
      *
-     * @param pure-callable(O): T $map
+     * @param callable(O): T $map
      *
      * @return self<I, T>
      */

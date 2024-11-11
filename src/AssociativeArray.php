@@ -73,7 +73,7 @@ final class AssociativeArray implements Constraint
     /**
      * @template T
      *
-     * @param pure-callable(Map<K, V>): T $map
+     * @param callable(Map<K, V>): T $map
      *
      * @return Constraint<mixed, T>
      */

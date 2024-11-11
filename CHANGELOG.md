@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- `Constraint::map()` callable no longer needs to be pure
+
 ## 1.6.1 - 2024-11-11
 
 ### Fixed
