@@ -46,21 +46,45 @@ final class AssociativeArray implements Constraint
         return new self($key, $value);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<Map<K, V>, T> $constraint
+     *
+     * @return Constraint<mixed, T>
+     */
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<mixed, T> $constraint
+     *
+     * @return Constraint<mixed, Map<K, V>|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(Map<K, V>): T $map
+     *
+     * @return Constraint<mixed, T>
+     */
     public function map(callable $map): Constraint
     {
         return namespace\Map::of($this, $map);
     }
 
+    /**
+     * @return Predicate<Map<K, V>>
+     */
     public function asPredicate(): Predicate
     {
         return namespace\Predicate::of($this);

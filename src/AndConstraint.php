@@ -56,21 +56,45 @@ final class AndConstraint implements Constraint
         return new self($a, $b);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<C, T> $constraint
+     *
+     * @return self<A, C, T>
+     */
     public function and(Constraint $constraint): self
     {
         return new self($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param Constraint<A, T> $constraint
+     *
+     * @return Constraint<A, C|T>
+     */
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
     }
 
+    /**
+     * @template T
+     *
+     * @param pure-callable(C): T $map
+     *
+     * @return Constraint<A, T>
+     */
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
     }
 
+    /**
+     * @return PredicateInterface<C>
+     */
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);
