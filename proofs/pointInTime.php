@@ -8,13 +8,19 @@ use Innmind\TimeContinuum\{
     Format,
 };
 use Innmind\BlackBox\Set;
-use Fixtures\Innmind\TimeContinuum\PointInTime as FPointInTime;
+use Fixtures\Innmind\TimeContinuum\{
+    PointInTime as FPointInTime,
+    Earth as FEarth,
+};
 
 return static function() {
     yield proof(
         'PointInTime::ofFormat()',
         given(
-            FPointInTime::any(),
+            match (true) {
+                \class_exists(FEarth\PointInTime::class) => FEarth\PointInTime::any(),
+                default => FPointInTime::any(),
+            },
             Set\Strings::any(),
         ),
         static function($assert, $point, $random) {
