@@ -86,4 +86,33 @@ return static function() {
             $assert->same($expected, $message);
         },
     );
+
+    yield test(
+        'PointInTime::ofFormat() with empty string fails',
+        static function($assert) {
+            $format = match (true) {
+                \class_exists(Format\ISO8601::class) => new Format\ISO8601,
+                default => Format::iso8601(),
+            };
+            $clock = match (true) {
+                \class_exists(Earth\Clock::class) => new Earth\Clock,
+                default => Clock::live(),
+            };
+
+            [[$path, $message]] = PointInTime::ofFormat($clock, $format)('')->match(
+                static fn() => null,
+                static fn($failures) => $failures
+                    ->map(static fn($failure) => [
+                        $failure->path()->toString(),
+                        $failure->message(),
+                    ])
+                    ->toList(),
+            );
+            $assert->same('$', $path);
+            $assert
+                ->string($message)
+                ->startsWith('Value is not a date of format ')
+                ->endsWith($format->toString());
+        },
+    );
 };
