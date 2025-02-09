@@ -39,6 +39,12 @@ final class PointInTime implements Constraint
 
     public function __invoke(mixed $value): Validation
     {
+        if ($value === '') {
+            return Validation::fail(Failure::of(
+                $this->message ?? "Value is not a date of format {$this->format->toString()}",
+            ));
+        }
+
         return $this->clock->at($value, $this->format)->match(
             static fn($point) => Validation::success($point),
             fn() => Validation::fail(Failure::of(

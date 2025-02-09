@@ -4,14 +4,14 @@ This will transform `string`s into `PointInTime`s from the [`innmind/time-contin
 
 ```php
 use Innmind\Validation\PointInTime;
-use Innmind\TimeContinuum\Earth\{
+use Innmind\TimeContinuum\{
     Clock,
-    Format\ISO8601,
+    Format,
 };
 
 $validate = PointInTime::ofFormat(
-    new Clock,
-    new ISO8601,
+    Clock::live(),
+    Format::iso8601(),
 );
 ```
 
