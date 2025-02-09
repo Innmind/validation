@@ -643,4 +643,53 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Is::value()',
+        given(
+            Set\Type::any(),
+            Set\Type::any(),
+            Set\Strings::any(),
+        )->filter(static fn($a, $b) => $a !== $b),
+        static function($assert, $a, $b, $message) {
+            $assert->same(
+                $a,
+                Is::value($a)($a)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->null(
+                Is::value($a)($b)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->same(
+                [['$', $message]],
+                Is::value($a, $message)($b)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+            $assert
+                ->string(
+                    Is::value($a)($b)->match(
+                        static fn() => null,
+                        static fn($failures) => $failures
+                            ->map(static fn($failure) => [
+                                $failure->path()->toString(),
+                                $failure->message(),
+                            ])
+                            ->toList()[0][1],
+                    ),
+                )
+                ->startsWith('Not of expected value of type');
+        },
+    );
 };

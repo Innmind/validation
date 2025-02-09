@@ -125,7 +125,7 @@ final class Is implements Constraint
      *
      * @return Constraint<mixed, list<E>>
      */
-    public static function list(Constraint $each = null): Constraint
+    public static function list(?Constraint $each = null): Constraint
     {
         /** @var self<array, list<mixed>> */
         $list = new self(\array_is_list(...), 'list');
@@ -180,6 +180,28 @@ final class Is implements Constraint
                 $message ?? 'No value was provided',
             )),
         ));
+    }
+
+    /**
+     * @psalm-pure
+     * @template V
+     *
+     * @param V $value
+     * @param ?non-empty-string $message
+     *
+     * @return Constraint<mixed, V>
+     */
+    public static function value(mixed $value, ?string $message = null): Constraint
+    {
+        return Of::callable(static fn(mixed $in) => match ($in) {
+            $value => Validation::success($value),
+            default => Validation::fail(Failure::of(
+                $message ?? \sprintf(
+                    'Not of expected value of type %s',
+                    \gettype($value),
+                ),
+            )),
+        });
     }
 
     /**

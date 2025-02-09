@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0 - 2025-02-09
+
+### Added
+
+- `Is::value()` to allow to defined discriminators
+
+### Fixed
+
+- Support for PHP `8.4`
+
 ## 1.7.0 - 2024-11-11
 
 ### Changed
