@@ -68,3 +68,49 @@ use Innmind\Validation\Is;
 
 $validate = Is::list(Is::string());
 ```
+
+## Specified value
+
+This constraint makes sure the the input value is the expected one.
+
+```php
+use Innmind\Validation\Is;
+
+$validate = Is::value(42);
+```
+
+If you call the constraint with any other value than `42`, the validation will fail. Of course you can specify any value of any type you wish.
+
+??? tip
+    This is especially useful to define discriminators when the input can be multiple [shapes](array-shapes.md) that are defined by a key.
+
+    ```php
+    use Innmind\Validation\Is;
+
+    $shapeA = Is::shape('discriminator', Is::value('a'))
+        ->with('some-key', Is::string());
+    $shapeB = Is::shape('discriminator', Is::value('b'))
+        ->with('other-key', Is::int());
+
+    $validate = $shapeA->or($shapeB);
+    ```
+
+    If you can `$validate` with one of the following values it will succeed:
+
+    === "A"
+        ```php
+        [
+            'discriminator' => 'a',
+            'some-key' => 'foo',
+        ]
+        ```
+
+    === "B"
+        ```php
+        [
+            'discriminator' => 'b',
+            'other-key' => 42,
+        ]
+        ```
+
+    Otherwise it will fail for any other array shape.

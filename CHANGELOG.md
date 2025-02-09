@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Is::value()` to allow to defined discriminators
+
 ### Fixed
 
 - Support for PHP `8.4`
