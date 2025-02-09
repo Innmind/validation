@@ -183,6 +183,28 @@ final class Is implements Constraint
     }
 
     /**
+     * @psalm-pure
+     * @template V
+     *
+     * @param V $value
+     * @param ?non-empty-string $message
+     *
+     * @return Constraint<mixed, V>
+     */
+    public static function value(mixed $value, ?string $message = null): Constraint
+    {
+        return Of::callable(static fn(mixed $in) => match ($in) {
+            $value => Validation::success($value),
+            default => Validation::fail(Failure::of(
+                $message ?? \sprintf(
+                    'Not of expected value of type %s',
+                    \gettype($value),
+                ),
+            )),
+        });
+    }
+
+    /**
      * @param non-empty-string $message
      *
      * @return self<T, U>
