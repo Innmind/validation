@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## 1.8.0 - 2025-02-09
 
 ### Added
 
