@@ -4,6 +4,7 @@ declare(strict_types = 1);
 use Innmind\Validation\PointInTime;
 use Innmind\TimeContinuum\{
     Earth,
+    Earth\Format\ISO8601,
     Clock,
     Format,
 };
@@ -25,7 +26,7 @@ return static function() {
         ),
         static function($assert, $point, $random) {
             $format = match (true) {
-                \class_exists(Format\ISO8601::class) => new Format\ISO8601,
+                \class_exists(ISO8601::class) => new ISO8601,
                 default => Format::of('Y-m-d\TH:i:s.uP'), // to support microseconds
             };
             $string = $point->format($format);
@@ -72,7 +73,7 @@ return static function() {
         ),
         static function($assert, $expected, $random) {
             $format = match (true) {
-                \class_exists(Format\ISO8601::class) => new Format\ISO8601,
+                \class_exists(ISO8601::class) => new ISO8601,
                 default => Format::iso8601(),
             };
             $clock = match (true) {
@@ -97,7 +98,7 @@ return static function() {
         'PointInTime::ofFormat() with empty string fails',
         static function($assert) {
             $format = match (true) {
-                \class_exists(Format\ISO8601::class) => new Format\ISO8601,
+                \class_exists(ISO8601::class) => new ISO8601,
                 default => Format::iso8601(),
             };
             $clock = match (true) {
