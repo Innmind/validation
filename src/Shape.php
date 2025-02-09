@@ -87,7 +87,7 @@ final class Shape implements Constraint
     /**
      * @param non-empty-string $key
      */
-    public function optional(string $key, Constraint $constraint = null): self
+    public function optional(string $key, ?Constraint $constraint = null): self
     {
         $optional = $this->optional;
         $optional[] = $key;

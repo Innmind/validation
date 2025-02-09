@@ -125,7 +125,7 @@ final class Is implements Constraint
      *
      * @return Constraint<mixed, list<E>>
      */
-    public static function list(Constraint $each = null): Constraint
+    public static function list(?Constraint $each = null): Constraint
     {
         /** @var self<array, list<mixed>> */
         $list = new self(\array_is_list(...), 'list');
