@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.0 - 2025-02-09
+
+### Added
+
+- Support for `innmind/time-continuum` `4`
+
 ## 1.8.0 - 2025-02-09
 
 ### Added
