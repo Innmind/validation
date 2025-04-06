@@ -105,7 +105,7 @@ final class Constraint
      */
     public function map(callable $map): self
     {
-        return new self(Map::of(
+        return new self(Constraint\Map::of(
             $this->implementation,
             $map,
         ));
