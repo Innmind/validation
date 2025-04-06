@@ -15,18 +15,14 @@ use Innmind\Immutable\{
  */
 final class Instance implements Constraint\Implementation
 {
-    /** @var Predicate\Instance<T> */
-    private Predicate\Instance $assert;
     /** @var class-string<T> */
     private string $class;
 
     /**
-     * @param Predicate\Instance<T> $assert
      * @param class-string<T> $class
      */
-    private function __construct(Predicate\Instance $assert, string $class)
+    private function __construct(string $class)
     {
-        $this->assert = $assert;
         $this->class = $class;
     }
 
@@ -34,7 +30,7 @@ final class Instance implements Constraint\Implementation
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, T> */
-        return match (($this->assert)($value)) {
+        return match ($value instanceof $this->class) {
             true => Validation::success($value),
             false => Validation::fail(Failure::of("Value is not an instance of {$this->class}")),
         };
@@ -50,7 +46,7 @@ final class Instance implements Constraint\Implementation
      */
     public static function of(string $class): self
     {
-        return new self(Predicate\Instance::of($class), $class);
+        return new self($class);
     }
 
     /**
@@ -98,6 +94,6 @@ final class Instance implements Constraint\Implementation
     #[\Override]
     public function asPredicate(): Predicate
     {
-        return $this->assert;
+        return namespace\Predicate::of($this);
     }
 }
