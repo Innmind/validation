@@ -29,6 +29,7 @@ final class Constraint
 
     /**
      * @param I $input
+     *
      * @return Validation<Failure, O>
      */
     public function __invoke(mixed $input): Validation
