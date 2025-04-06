@@ -3,6 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate as PredicateInterface,
@@ -12,22 +16,22 @@ use Innmind\Immutable\{
  * @template-covariant A
  * @template-covariant B
  * @template-covariant C
- * @implements Constraint\Implementation<A, C>
- * @implements Constraint\Provider<A, C>
+ * @implements Implementation<A, C>
+ * @implements Provider<A, C>
  * @psalm-immutable
  */
-final class AndConstraint implements Constraint\Implementation, Constraint\Provider
+final class AndConstraint implements Implementation, Provider
 {
-    /** @var Constraint\Implementation<A, B> */
-    private Constraint\Implementation $a;
-    /** @var Constraint\Implementation<B, C> */
-    private Constraint\Implementation $b;
+    /** @var Implementation<A, B>|Constraint<A, B> */
+    private Implementation|Constraint $a;
+    /** @var Implementation<B, C>|Constraint<B, C> */
+    private Implementation|Constraint $b;
 
     /**
-     * @param Constraint\Implementation<A, B> $a
-     * @param Constraint\Implementation<B, C> $b
+     * @param Implementation<A, B>|Constraint<A, B> $a
+     * @param Implementation<B, C>|Constraint<B, C> $b
      */
-    private function __construct(Constraint\Implementation $a, Constraint\Implementation $b)
+    private function __construct(Implementation|Constraint $a, Implementation|Constraint $b)
     {
         $this->a = $a;
         $this->b = $b;
@@ -54,38 +58,46 @@ final class AndConstraint implements Constraint\Implementation, Constraint\Provi
      * @template V
      * @psalm-pure
      *
-     * @param Constraint\Implementation<T, U> $a
-     * @param Constraint\Implementation<U, V> $b
+     * @param Implementation<T, U>|Provider<T, U>|Constraint<T, U> $a
+     * @param Implementation<U, V>|Provider<U, V>|Constraint<U, V> $b
      *
      * @return self<T, U, V>
      */
-    public static function of(Constraint\Implementation $a, Constraint\Implementation $b): self
+    public static function of(Implementation|Provider|Constraint $a, Implementation|Provider|Constraint $b): self
     {
+        if ($a instanceof Provider) {
+            $a = $a->toConstraint();
+        }
+
+        if ($b instanceof Provider) {
+            $b = $b->toConstraint();
+        }
+
         return new self($a, $b);
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<C, T> $constraint
+     * @param Implementation<C, T>|Provider<C, T>|Constraint<C, T> $constraint
      *
      * @return self<A, C, T>
      */
     #[\Override]
-    public function and(Constraint\Implementation $constraint): self
+    public function and(Implementation|Provider|Constraint $constraint): self
     {
-        return new self($this, $constraint);
+        return self::of($this, $constraint);
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<A, T> $constraint
+     * @param Implementation<A, T>|Provider<A, T>|Constraint<A, T> $constraint
      *
-     * @return Constraint\Implementation<A, C|T>
+     * @return Implementation<A, C|T>
      */
     #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation|Provider|Constraint $constraint): Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -95,10 +107,10 @@ final class AndConstraint implements Constraint\Implementation, Constraint\Provi
      *
      * @param callable(C): T $map
      *
-     * @return Constraint\Implementation<A, T>
+     * @return Implementation<A, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Implementation
     {
         return Map::of($this, $map);
     }
