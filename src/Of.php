@@ -27,6 +27,7 @@ final class Of implements Constraint
         $this->assert = $assert;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         return ($this->assert)($value);
@@ -53,6 +54,7 @@ final class Of implements Constraint
      *
      * @return Constraint<A, T>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -65,6 +67,7 @@ final class Of implements Constraint
      *
      * @return Constraint<A, B|T>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -77,6 +80,7 @@ final class Of implements Constraint
      *
      * @return Constraint<A, T>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -85,6 +89,7 @@ final class Of implements Constraint
     /**
      * @return PredicateInterface<B>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

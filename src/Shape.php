@@ -46,6 +46,7 @@ final class Shape implements Constraint
         $this->message = $message;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         return Is::array()($value)->flatMap($this->validate(...));
@@ -167,6 +168,7 @@ final class Shape implements Constraint
      *
      * @return Constraint<mixed, T>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -179,6 +181,7 @@ final class Shape implements Constraint
      *
      * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>|T>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -191,6 +194,7 @@ final class Shape implements Constraint
      *
      * @return Constraint<mixed, T>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -199,6 +203,7 @@ final class Shape implements Constraint
     /**
      * @return PredicateInterface<non-empty-array<non-empty-string, mixed>>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

@@ -39,6 +39,7 @@ final class Is implements Constraint
         $this->message = $message;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, U> */
@@ -221,6 +222,7 @@ final class Is implements Constraint
      *
      * @return Constraint<T, V>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -233,6 +235,7 @@ final class Is implements Constraint
      *
      * @return Constraint<T, U|V>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -245,6 +248,7 @@ final class Is implements Constraint
      *
      * @return Constraint<T, V>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -253,6 +257,7 @@ final class Is implements Constraint
     /**
      * @return PredicateInterface<U>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

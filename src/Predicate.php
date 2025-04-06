@@ -23,6 +23,7 @@ final class Predicate implements PredicateInterface
         $this->constraint = $constraint;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): bool
     {
         return ($this->constraint)($value)->match(

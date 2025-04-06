@@ -32,6 +32,7 @@ final class OrConstraint implements Constraint
         $this->b = $b;
     }
 
+    #[\Override]
     public function __invoke(mixed $input): Validation
     {
         /** @psalm-suppress MixedArgument */
@@ -63,6 +64,7 @@ final class OrConstraint implements Constraint
      *
      * @return Constraint<A, T>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -75,6 +77,7 @@ final class OrConstraint implements Constraint
      *
      * @return self<A, B|C, T>
      */
+    #[\Override]
     public function or(Constraint $constraint): self
     {
         return new self($this, $constraint);
@@ -87,6 +90,7 @@ final class OrConstraint implements Constraint
      *
      * @return Constraint<A, T>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -95,6 +99,7 @@ final class OrConstraint implements Constraint
     /**
      * @return PredicateInterface<B|C>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

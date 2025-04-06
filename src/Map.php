@@ -32,6 +32,7 @@ final class Map implements Constraint
         $this->map = $map;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         /** @psalm-suppress ImpureFunctionCall */
@@ -61,6 +62,7 @@ final class Map implements Constraint
      *
      * @return Constraint<I, V>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -73,6 +75,7 @@ final class Map implements Constraint
      *
      * @return Constraint<I, T|V>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -85,6 +88,7 @@ final class Map implements Constraint
      *
      * @return self<I, T, V>
      */
+    #[\Override]
     public function map(callable $map): self
     {
         return new self($this, $map);
@@ -93,6 +97,7 @@ final class Map implements Constraint
     /**
      * @return PredicateInterface<T>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

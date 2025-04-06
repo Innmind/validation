@@ -29,6 +29,7 @@ final class Has implements Constraint
         $this->message = $message;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         /** @psalm-suppress ImpureFunctionCall */
@@ -70,6 +71,7 @@ final class Has implements Constraint
      *
      * @return Constraint<array, T>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -82,6 +84,7 @@ final class Has implements Constraint
      *
      * @return Constraint<array, mixed|T>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -94,6 +97,7 @@ final class Has implements Constraint
      *
      * @return Constraint<array, T>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -102,6 +106,7 @@ final class Has implements Constraint
     /**
      * @return PredicateInterface<mixed>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

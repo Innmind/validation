@@ -30,6 +30,7 @@ final class Instance implements Constraint
         $this->class = $class;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, T> */
@@ -59,6 +60,7 @@ final class Instance implements Constraint
      *
      * @return Constraint<mixed, V>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -71,6 +73,7 @@ final class Instance implements Constraint
      *
      * @return Constraint<mixed, T|V>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -83,6 +86,7 @@ final class Instance implements Constraint
      *
      * @return Constraint<mixed, V>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -91,6 +95,7 @@ final class Instance implements Constraint
     /**
      * @return Predicate<T>
      */
+    #[\Override]
     public function asPredicate(): Predicate
     {
         return $this->assert;

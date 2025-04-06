@@ -26,6 +26,7 @@ final class Each implements Constraint
         $this->constraint = $constraint;
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, list<T>> */
@@ -63,6 +64,7 @@ final class Each implements Constraint
      *
      * @return Constraint<list, V>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -75,6 +77,7 @@ final class Each implements Constraint
      *
      * @return Constraint<list, list<T>|V>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -87,6 +90,7 @@ final class Each implements Constraint
      *
      * @return Constraint<list, V>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return Map::of($this, $map);
@@ -95,6 +99,7 @@ final class Each implements Constraint
     /**
      * @return PredicateInterface<list<T>>
      */
+    #[\Override]
     public function asPredicate(): PredicateInterface
     {
         return Predicate::of($this);

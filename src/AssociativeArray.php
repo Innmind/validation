@@ -26,6 +26,7 @@ final class AssociativeArray implements Constraint
     ) {
     }
 
+    #[\Override]
     public function __invoke(mixed $value): Validation
     {
         return Is::array()($value)->flatMap($this->validate(...));
@@ -53,6 +54,7 @@ final class AssociativeArray implements Constraint
      *
      * @return Constraint<mixed, T>
      */
+    #[\Override]
     public function and(Constraint $constraint): Constraint
     {
         return AndConstraint::of($this, $constraint);
@@ -65,6 +67,7 @@ final class AssociativeArray implements Constraint
      *
      * @return Constraint<mixed, Map<K, V>|T>
      */
+    #[\Override]
     public function or(Constraint $constraint): Constraint
     {
         return OrConstraint::of($this, $constraint);
@@ -77,6 +80,7 @@ final class AssociativeArray implements Constraint
      *
      * @return Constraint<mixed, T>
      */
+    #[\Override]
     public function map(callable $map): Constraint
     {
         return namespace\Map::of($this, $map);
@@ -85,6 +89,7 @@ final class AssociativeArray implements Constraint
     /**
      * @return Predicate<Map<K, V>>
      */
+    #[\Override]
     public function asPredicate(): Predicate
     {
         return namespace\Predicate::of($this);
