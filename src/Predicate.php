@@ -12,13 +12,13 @@ use Innmind\Immutable\Predicate as PredicateInterface;
  */
 final class Predicate implements PredicateInterface
 {
-    /** @var Constraint<mixed, T> */
-    private Constraint $constraint;
+    /** @var Constraint\Implementation<mixed, T> */
+    private Constraint\Implementation $constraint;
 
     /**
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      */
-    private function __construct(Constraint $constraint)
+    private function __construct(Constraint\Implementation $constraint)
     {
         $this->constraint = $constraint;
     }
@@ -36,11 +36,11 @@ final class Predicate implements PredicateInterface
      * @template A
      * @psalm-pure
      *
-     * @param Constraint<mixed, A> $constraint
+     * @param Constraint\Implementation<mixed, A> $constraint
      *
      * @return self<A>
      */
-    public static function of(Constraint $constraint): self
+    public static function of(Constraint\Implementation $constraint): self
     {
         return new self($constraint);
     }

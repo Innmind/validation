@@ -9,10 +9,10 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Constraint<array, mixed>
+ * @implements Constraint\Implementation<array, mixed>
  * @psalm-immutable
  */
-final class Has implements Constraint
+final class Has implements Constraint\Implementation
 {
     /** @var non-empty-string */
     private string $key;
@@ -67,12 +67,12 @@ final class Has implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      *
-     * @return Constraint<array, T>
+     * @return Constraint\Implementation<array, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -80,12 +80,12 @@ final class Has implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<array, T> $constraint
+     * @param Constraint\Implementation<array, T> $constraint
      *
-     * @return Constraint<array, mixed|T>
+     * @return Constraint\Implementation<array, mixed|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -95,10 +95,10 @@ final class Has implements Constraint
      *
      * @param callable(mixed): T $map
      *
-     * @return Constraint<array, T>
+     * @return Constraint\Implementation<array, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

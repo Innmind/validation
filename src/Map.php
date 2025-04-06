@@ -12,21 +12,21 @@ use Innmind\Immutable\{
  * @template-covariant I
  * @template-covariant O
  * @template-covariant T
- * @implements Constraint<I, T>
+ * @implements Constraint\Implementation<I, T>
  * @psalm-immutable
  */
-final class Map implements Constraint
+final class Map implements Constraint\Implementation
 {
-    /** @var Constraint<I, O> */
-    private Constraint $constraint;
+    /** @var Constraint\Implementation<I, O> */
+    private Constraint\Implementation $constraint;
     /** @var callable(O): T */
     private $map;
 
     /**
-     * @param Constraint<I, O> $constraint
+     * @param Constraint\Implementation<I, O> $constraint
      * @param callable(O): T $map
      */
-    private function __construct(Constraint $constraint, callable $map)
+    private function __construct(Constraint\Implementation $constraint, callable $map)
     {
         $this->constraint = $constraint;
         $this->map = $map;
@@ -45,12 +45,12 @@ final class Map implements Constraint
      * @template C
      * @psalm-pure
      *
-     * @param Constraint<A, B> $constraint
+     * @param Constraint\Implementation<A, B> $constraint
      * @param callable(B): C $map
      *
      * @return self<A, B, C>
      */
-    public static function of(Constraint $constraint, callable $map): self
+    public static function of(Constraint\Implementation $constraint, callable $map): self
     {
         return new self($constraint, $map);
     }
@@ -58,12 +58,12 @@ final class Map implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<T, V> $constraint
+     * @param Constraint\Implementation<T, V> $constraint
      *
-     * @return Constraint<I, V>
+     * @return Constraint\Implementation<I, V>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -71,12 +71,12 @@ final class Map implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<I, V> $constraint
+     * @param Constraint\Implementation<I, V> $constraint
      *
-     * @return Constraint<I, T|V>
+     * @return Constraint\Implementation<I, T|V>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }

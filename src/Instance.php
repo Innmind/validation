@@ -10,10 +10,10 @@ use Innmind\Immutable\{
 
 /**
  * @template-covariant T of object
- * @implements Constraint<mixed, T>
+ * @implements Constraint\Implementation<mixed, T>
  * @psalm-immutable
  */
-final class Instance implements Constraint
+final class Instance implements Constraint\Implementation
 {
     /** @var Predicate\Instance<T> */
     private Predicate\Instance $assert;
@@ -56,12 +56,12 @@ final class Instance implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<T, V> $constraint
+     * @param Constraint\Implementation<T, V> $constraint
      *
-     * @return Constraint<mixed, V>
+     * @return Constraint\Implementation<mixed, V>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -69,12 +69,12 @@ final class Instance implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<mixed, V> $constraint
+     * @param Constraint\Implementation<mixed, V> $constraint
      *
-     * @return Constraint<mixed, T|V>
+     * @return Constraint\Implementation<mixed, T|V>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -84,10 +84,10 @@ final class Instance implements Constraint
      *
      * @param callable(T): V $map
      *
-     * @return Constraint<mixed, V>
+     * @return Constraint\Implementation<mixed, V>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

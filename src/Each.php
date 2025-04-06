@@ -10,18 +10,18 @@ use Innmind\Immutable\{
 
 /**
  * @template T
- * @implements Constraint<list, list<T>>
+ * @implements Constraint\Implementation<list, list<T>>
  * @psalm-immutable
  */
-final class Each implements Constraint
+final class Each implements Constraint\Implementation
 {
-    /** @var Constraint<mixed, T> */
-    private Constraint $constraint;
+    /** @var Constraint\Implementation<mixed, T> */
+    private Constraint\Implementation $constraint;
 
     /**
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      */
-    private function __construct(Constraint $constraint)
+    private function __construct(Constraint\Implementation $constraint)
     {
         $this->constraint = $constraint;
     }
@@ -48,11 +48,11 @@ final class Each implements Constraint
      * @template A
      * @psalm-pure
      *
-     * @param Constraint<mixed, A> $constraint
+     * @param Constraint\Implementation<mixed, A> $constraint
      *
      * @return self<A>
      */
-    public static function of(Constraint $constraint): self
+    public static function of(Constraint\Implementation $constraint): self
     {
         return new self($constraint);
     }
@@ -60,12 +60,12 @@ final class Each implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<list<T>, V> $constraint
+     * @param Constraint\Implementation<list<T>, V> $constraint
      *
-     * @return Constraint<list, V>
+     * @return Constraint\Implementation<list, V>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -73,12 +73,12 @@ final class Each implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<list, V> $constraint
+     * @param Constraint\Implementation<list, V> $constraint
      *
-     * @return Constraint<list, list<T>|V>
+     * @return Constraint\Implementation<list, list<T>|V>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -88,10 +88,10 @@ final class Each implements Constraint
      *
      * @param callable(list<T>): V $map
      *
-     * @return Constraint<list, V>
+     * @return Constraint\Implementation<list, V>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

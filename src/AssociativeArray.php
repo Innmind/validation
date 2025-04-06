@@ -13,16 +13,16 @@ use Innmind\Immutable\{
 /**
  * @template K
  * @template V
- * @implements Constraint<mixed, Map<K, V>>
+ * @implements Constraint\Implementation<mixed, Map<K, V>>
  * @psalm-immutable
  */
-final class AssociativeArray implements Constraint
+final class AssociativeArray implements Constraint\Implementation
 {
     private function __construct(
-        /** @var Constraint<mixed, K> */
-        private Constraint $key,
-        /** @var Constraint<mixed, V> */
-        private Constraint $value,
+        /** @var Constraint\Implementation<mixed, K> */
+        private Constraint\Implementation $key,
+        /** @var Constraint\Implementation<mixed, V> */
+        private Constraint\Implementation $value,
     ) {
     }
 
@@ -37,12 +37,12 @@ final class AssociativeArray implements Constraint
      * @template A
      * @template B
      *
-     * @param Constraint<mixed, A> $key
-     * @param Constraint<mixed, B> $value
+     * @param Constraint\Implementation<mixed, A> $key
+     * @param Constraint\Implementation<mixed, B> $value
      *
      * @return self<A, B>
      */
-    public static function of(Constraint $key, Constraint $value): self
+    public static function of(Constraint\Implementation $key, Constraint\Implementation $value): self
     {
         return new self($key, $value);
     }
@@ -50,12 +50,12 @@ final class AssociativeArray implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<Map<K, V>, T> $constraint
+     * @param Constraint\Implementation<Map<K, V>, T> $constraint
      *
-     * @return Constraint<mixed, T>
+     * @return Constraint\Implementation<mixed, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -63,12 +63,12 @@ final class AssociativeArray implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      *
-     * @return Constraint<mixed, Map<K, V>|T>
+     * @return Constraint\Implementation<mixed, Map<K, V>|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -78,10 +78,10 @@ final class AssociativeArray implements Constraint
      *
      * @param callable(Map<K, V>): T $map
      *
-     * @return Constraint<mixed, T>
+     * @return Constraint\Implementation<mixed, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return namespace\Map::of($this, $map);
     }

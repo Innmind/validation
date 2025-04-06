@@ -12,21 +12,21 @@ use Innmind\Immutable\{
  * @template-covariant A
  * @template-covariant B
  * @template-covariant C
- * @implements Constraint<A, C>
+ * @implements Constraint\Implementation<A, C>
  * @psalm-immutable
  */
-final class AndConstraint implements Constraint
+final class AndConstraint implements Constraint\Implementation
 {
-    /** @var Constraint<A, B> */
-    private Constraint $a;
-    /** @var Constraint<B, C> */
-    private Constraint $b;
+    /** @var Constraint\Implementation<A, B> */
+    private Constraint\Implementation $a;
+    /** @var Constraint\Implementation<B, C> */
+    private Constraint\Implementation $b;
 
     /**
-     * @param Constraint<A, B> $a
-     * @param Constraint<B, C> $b
+     * @param Constraint\Implementation<A, B> $a
+     * @param Constraint\Implementation<B, C> $b
      */
-    private function __construct(Constraint $a, Constraint $b)
+    private function __construct(Constraint\Implementation $a, Constraint\Implementation $b)
     {
         $this->a = $a;
         $this->b = $b;
@@ -47,12 +47,12 @@ final class AndConstraint implements Constraint
      * @template V
      * @psalm-pure
      *
-     * @param Constraint<T, U> $a
-     * @param Constraint<U, V> $b
+     * @param Constraint\Implementation<T, U> $a
+     * @param Constraint\Implementation<U, V> $b
      *
      * @return self<T, U, V>
      */
-    public static function of(Constraint $a, Constraint $b): self
+    public static function of(Constraint\Implementation $a, Constraint\Implementation $b): self
     {
         return new self($a, $b);
     }
@@ -60,12 +60,12 @@ final class AndConstraint implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<C, T> $constraint
+     * @param Constraint\Implementation<C, T> $constraint
      *
      * @return self<A, C, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): self
+    public function and(Constraint\Implementation $constraint): self
     {
         return new self($this, $constraint);
     }
@@ -73,12 +73,12 @@ final class AndConstraint implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<A, T> $constraint
+     * @param Constraint\Implementation<A, T> $constraint
      *
-     * @return Constraint<A, C|T>
+     * @return Constraint\Implementation<A, C|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -88,10 +88,10 @@ final class AndConstraint implements Constraint
      *
      * @param callable(C): T $map
      *
-     * @return Constraint<A, T>
+     * @return Constraint\Implementation<A, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

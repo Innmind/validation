@@ -11,10 +11,10 @@ use Innmind\Immutable\{
 /**
  * @template-covariant A
  * @template-covariant B
- * @implements Constraint<A, B>
+ * @implements Constraint\Implementation<A, B>
  * @psalm-immutable
  */
-final class Of implements Constraint
+final class Of implements Constraint\Implementation
 {
     /** @var pure-callable(A): Validation<Failure, B> */
     private $assert;
@@ -50,12 +50,12 @@ final class Of implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<B, T> $constraint
+     * @param Constraint\Implementation<B, T> $constraint
      *
-     * @return Constraint<A, T>
+     * @return Constraint\Implementation<A, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -63,12 +63,12 @@ final class Of implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<A, T> $constraint
+     * @param Constraint\Implementation<A, T> $constraint
      *
-     * @return Constraint<A, B|T>
+     * @return Constraint\Implementation<A, B|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -78,10 +78,10 @@ final class Of implements Constraint
      *
      * @param callable(B): T $map
      *
-     * @return Constraint<A, T>
+     * @return Constraint\Implementation<A, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

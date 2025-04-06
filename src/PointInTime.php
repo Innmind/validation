@@ -14,10 +14,10 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Constraint<string, PointInTimeInterface>
+ * @implements Constraint\Implementation<string, PointInTimeInterface>
  * @psalm-immutable
  */
-final class PointInTime implements Constraint
+final class PointInTime implements Constraint\Implementation
 {
     private Clock $clock;
     private Format $format;
@@ -73,12 +73,12 @@ final class PointInTime implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<PointInTimeInterface, T> $constraint
+     * @param Constraint\Implementation<PointInTimeInterface, T> $constraint
      *
-     * @return Constraint<string, T>
+     * @return Constraint\Implementation<string, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -86,12 +86,12 @@ final class PointInTime implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<string, T> $constraint
+     * @param Constraint\Implementation<string, T> $constraint
      *
-     * @return Constraint<string, PointInTimeInterface|T>
+     * @return Constraint\Implementation<string, PointInTimeInterface|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -101,10 +101,10 @@ final class PointInTime implements Constraint
      *
      * @param callable(PointInTimeInterface): T $map
      *
-     * @return Constraint<string, T>
+     * @return Constraint\Implementation<string, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

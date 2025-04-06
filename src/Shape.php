@@ -9,12 +9,12 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Constraint<mixed, non-empty-array<non-empty-string, mixed>>
+ * @implements Constraint\Implementation<mixed, non-empty-array<non-empty-string, mixed>>
  * @psalm-immutable
  */
-final class Shape implements Constraint
+final class Shape implements Constraint\Implementation
 {
-    /** @var non-empty-array<non-empty-string, Constraint<mixed, mixed>> */
+    /** @var non-empty-array<non-empty-string, Constraint\Implementation<mixed, mixed>> */
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
@@ -26,7 +26,7 @@ final class Shape implements Constraint
     private $message;
 
     /**
-     * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints
+     * @param non-empty-array<non-empty-string, Constraint\Implementation<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
      * @param array<non-empty-string, mixed> $defaults
      * @param array<non-empty-string, non-empty-string> $rename
@@ -57,7 +57,7 @@ final class Shape implements Constraint
      *
      * @param non-empty-string $key
      */
-    public static function of(string $key, Constraint $constraint): self
+    public static function of(string $key, Constraint\Implementation $constraint): self
     {
         return new self(
             [$key => $constraint],
@@ -71,7 +71,7 @@ final class Shape implements Constraint
     /**
      * @param non-empty-string $key
      */
-    public function with(string $key, Constraint $constraint): self
+    public function with(string $key, Constraint\Implementation $constraint): self
     {
         $constraints = $this->constraints;
         $constraints[$key] = $constraint;
@@ -88,13 +88,13 @@ final class Shape implements Constraint
     /**
      * @param non-empty-string $key
      */
-    public function optional(string $key, ?Constraint $constraint = null): self
+    public function optional(string $key, ?Constraint\Implementation $constraint = null): self
     {
         $optional = $this->optional;
         $optional[] = $key;
         $constraints = $this->constraints;
 
-        if ($constraint instanceof Constraint) {
+        if ($constraint instanceof Constraint\Implementation) {
             $constraints[$key] = $constraint;
         }
 
@@ -164,12 +164,12 @@ final class Shape implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<non-empty-array<non-empty-string, mixed>, T> $constraint
+     * @param Constraint\Implementation<non-empty-array<non-empty-string, mixed>, T> $constraint
      *
-     * @return Constraint<mixed, T>
+     * @return Constraint\Implementation<mixed, T>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -177,12 +177,12 @@ final class Shape implements Constraint
     /**
      * @template T
      *
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      *
-     * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>|T>
+     * @return Constraint\Implementation<mixed, non-empty-array<non-empty-string, mixed>|T>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -192,10 +192,10 @@ final class Shape implements Constraint
      *
      * @param callable(non-empty-array<non-empty-string, mixed>): T $map
      *
-     * @return Constraint<mixed, T>
+     * @return Constraint\Implementation<mixed, T>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }

@@ -12,10 +12,10 @@ use Innmind\Immutable\{
 /**
  * @template-covariant T
  * @template-covariant U
- * @implements Constraint<T, U>
+ * @implements Constraint\Implementation<T, U>
  * @psalm-immutable
  */
-final class Is implements Constraint
+final class Is implements Constraint\Implementation
 {
     /** @var pure-callable(T): bool */
     private $assert;
@@ -122,11 +122,11 @@ final class Is implements Constraint
      *
      * @template E
      *
-     * @param Constraint<mixed, E> $each
+     * @param Constraint\Implementation<mixed, E> $each
      *
-     * @return Constraint<mixed, list<E>>
+     * @return Constraint\Implementation<mixed, list<E>>
      */
-    public static function list(?Constraint $each = null): Constraint
+    public static function list(?Constraint\Implementation $each = null): Constraint\Implementation
     {
         /** @var self<array, list<mixed>> */
         $list = new self(\array_is_list(...), 'list');
@@ -144,7 +144,7 @@ final class Is implements Constraint
      *
      * @param non-empty-string $key
      */
-    public static function shape(string $key, Constraint $constraint): Shape
+    public static function shape(string $key, Constraint\Implementation $constraint): Shape
     {
         return Shape::of($key, $constraint);
     }
@@ -154,12 +154,12 @@ final class Is implements Constraint
      * @template K
      * @template V
      *
-     * @param Constraint<mixed, K> $key
-     * @param Constraint<mixed, V> $value
+     * @param Constraint\Implementation<mixed, K> $key
+     * @param Constraint\Implementation<mixed, V> $value
      *
      * @return AssociativeArray<K, V>
      */
-    public static function associativeArray(Constraint $key, Constraint $value): AssociativeArray
+    public static function associativeArray(Constraint\Implementation $key, Constraint\Implementation $value): AssociativeArray
     {
         return AssociativeArray::of($key, $value);
     }
@@ -170,9 +170,9 @@ final class Is implements Constraint
      *
      * @param ?non-empty-string $message
      *
-     * @return Constraint<Maybe<V>, V>
+     * @return Constraint\Implementation<Maybe<V>, V>
      */
-    public static function just(?string $message = null): Constraint
+    public static function just(?string $message = null): Constraint\Implementation
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
         return Of::callable(static fn(Maybe $value) => $value->match(
@@ -190,9 +190,9 @@ final class Is implements Constraint
      * @param V $value
      * @param ?non-empty-string $message
      *
-     * @return Constraint<mixed, V>
+     * @return Constraint\Implementation<mixed, V>
      */
-    public static function value(mixed $value, ?string $message = null): Constraint
+    public static function value(mixed $value, ?string $message = null): Constraint\Implementation
     {
         return Of::callable(static fn(mixed $in) => match ($in) {
             $value => Validation::success($value),
@@ -218,12 +218,12 @@ final class Is implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<U, V> $constraint
+     * @param Constraint\Implementation<U, V> $constraint
      *
-     * @return Constraint<T, V>
+     * @return Constraint\Implementation<T, V>
      */
     #[\Override]
-    public function and(Constraint $constraint): Constraint
+    public function and(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -231,12 +231,12 @@ final class Is implements Constraint
     /**
      * @template V
      *
-     * @param Constraint<T, V> $constraint
+     * @param Constraint\Implementation<T, V> $constraint
      *
-     * @return Constraint<T, U|V>
+     * @return Constraint\Implementation<T, U|V>
      */
     #[\Override]
-    public function or(Constraint $constraint): Constraint
+    public function or(Constraint\Implementation $constraint): Constraint\Implementation
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -246,10 +246,10 @@ final class Is implements Constraint
      *
      * @param callable(U): V $map
      *
-     * @return Constraint<T, V>
+     * @return Constraint\Implementation<T, V>
      */
     #[\Override]
-    public function map(callable $map): Constraint
+    public function map(callable $map): Constraint\Implementation
     {
         return Map::of($this, $map);
     }
