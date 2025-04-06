@@ -6,8 +6,8 @@ namespace Innmind\Validation\Constraint;
 use Innmind\Validation\Constraint;
 
 /**
- * @template T
- * @template U
+ * @template-covariant T
+ * @template-covariant U
  */
 interface Provider
 {
