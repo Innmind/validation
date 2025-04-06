@@ -48,7 +48,7 @@ final class Constraint
      */
     public static function of(callable $assert): self
     {
-        return new self(Of::callable($assert));
+        return new self(Constraint\Of::callable($assert));
     }
 
     /**

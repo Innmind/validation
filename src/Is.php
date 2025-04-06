@@ -187,12 +187,12 @@ final class Is implements Provider
      *
      * @param ?non-empty-string $message
      *
-     * @return Implementation<Maybe<V>, V>
+     * @return Constraint<Maybe<V>, V>
      */
-    public static function just(?string $message = null): Implementation
+    public static function just(?string $message = null): Constraint
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
-        return Of::callable(static fn(Maybe $value) => $value->match(
+        return Constraint::of(static fn(Maybe $value) => $value->match(
             Validation::success(...),
             static fn() => Validation::fail(Failure::of(
                 $message ?? 'No value was provided',
@@ -207,11 +207,11 @@ final class Is implements Provider
      * @param V $value
      * @param ?non-empty-string $message
      *
-     * @return Implementation<mixed, V>
+     * @return Constraint<mixed, V>
      */
-    public static function value(mixed $value, ?string $message = null): Implementation
+    public static function value(mixed $value, ?string $message = null): Constraint
     {
-        return Of::callable(static fn(mixed $in) => match ($in) {
+        return Constraint::of(static fn(mixed $in) => match ($in) {
             $value => Validation::success($value),
             default => Validation::fail(Failure::of(
                 $message ?? \sprintf(
