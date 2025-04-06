@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\Implementation;
+use Innmind\Validation\{
+    Constraint\Implementation,
+    Constraint\Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate,
@@ -65,30 +68,30 @@ final class Constraint
     /**
      * @template T
      *
-     * @param self<O, T> $constraint
+     * @param self<O, T>|Provider<O, T> $constraint
      *
      * @return self<I, T>
      */
-    public function and(self $constraint): self
+    public function and(self|Provider $constraint): self
     {
         return new self(Constraint\AndConstraint::of(
             $this->implementation,
-            $constraint->implementation,
+            self::collapse($constraint)->implementation,
         ));
     }
 
     /**
      * @template T
      *
-     * @param self<I, T> $constraint
+     * @param self<I, T>|Provider<I, T> $constraint
      *
      * @return self<I, O|T>
      */
-    public function or(self $constraint): self
+    public function or(self|Provider $constraint): self
     {
         return new self(OrConstraint::of(
             $this->implementation,
-            $constraint->implementation,
+            self::collapse($constraint)->implementation,
         ));
     }
 
@@ -113,5 +116,23 @@ final class Constraint
     public function asPredicate(): Predicate
     {
         return namespace\Predicate::of($this->implementation);
+    }
+
+    /**
+     * @psalm-pure
+     * @template T
+     * @template U
+     *
+     * @param self<T, U>|Provider<T, U> $constraint
+     *
+     * @return self<T, U>
+     */
+    private static function collapse(self|Provider $constraint): self
+    {
+        if ($constraint instanceof self) {
+            return $constraint;
+        }
+
+        return $constraint->toConstraint();
     }
 }
