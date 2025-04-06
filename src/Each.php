@@ -3,6 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate as PredicateInterface,
@@ -10,24 +14,27 @@ use Innmind\Immutable\{
 
 /**
  * @template T
- * @implements Constraint\Implementation<list, list<T>>
- * @implements Constraint\Provider<list, list<T>>
+ * @implements Provider<list, list<T>>
  * @psalm-immutable
  */
-final class Each implements Constraint\Implementation, Constraint\Provider
+final class Each implements Provider
 {
-    /** @var Constraint\Implementation<mixed, T> */
-    private Constraint\Implementation $constraint;
+    /** @var Implementation<mixed, T>|Constraint<mixed, T> */
+    private Implementation|Constraint $constraint;
 
     /**
-     * @param Constraint\Implementation<mixed, T> $constraint
+     * @param Implementation<mixed, T>|Constraint<mixed, T> $constraint
      */
-    private function __construct(Constraint\Implementation $constraint)
+    private function __construct(Implementation|Constraint $constraint)
     {
         $this->constraint = $constraint;
     }
 
-    #[\Override]
+    /**
+     * @param list $value
+     *
+     * @return Validation<Failure, list<T>>
+     */
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, list<T>> */
@@ -48,46 +55,53 @@ final class Each implements Constraint\Implementation, Constraint\Provider
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
      * @template A
      * @psalm-pure
      *
-     * @param Constraint\Implementation<mixed, A> $constraint
+     * @param Implementation<mixed, A>|Provider<mixed, A>|Constraint<mixed, A> $constraint
      *
      * @return self<A>
      */
-    public static function of(Constraint\Implementation $constraint): self
+    public static function of(Implementation|Provider|Constraint $constraint): self
     {
+        if ($constraint instanceof Provider) {
+            $constraint = $constraint->toConstraint();
+        }
+
         return new self($constraint);
     }
 
     /**
      * @template V
      *
-     * @param Constraint\Implementation<list<T>, V> $constraint
+     * @param Implementation<list<T>, V> $constraint
      *
-     * @return Constraint\Implementation<list, V>
+     * @return Constraint<list, V>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
      * @template V
      *
-     * @param Constraint\Implementation<list, V> $constraint
+     * @param Implementation<list, V> $constraint
      *
-     * @return Constraint\Implementation<list, list<T>|V>
+     * @return Constraint<list, list<T>|V>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -95,20 +109,22 @@ final class Each implements Constraint\Implementation, Constraint\Provider
      *
      * @param callable(list<T>): V $map
      *
-     * @return Constraint\Implementation<list, V>
+     * @return Constraint<list, V>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return PredicateInterface<list<T>>
      */
-    #[\Override]
     public function asPredicate(): PredicateInterface
     {
-        return Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 }

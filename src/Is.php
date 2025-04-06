@@ -3,6 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Maybe,
@@ -12,11 +16,11 @@ use Innmind\Immutable\{
 /**
  * @template-covariant T
  * @template-covariant U
- * @implements Constraint\Implementation<T, U>
- * @implements Constraint\Provider<T, U>
+ * @implements Implementation<T, U>
+ * @implements Provider<T, U>
  * @psalm-immutable
  */
-final class Is implements Constraint\Implementation, Constraint\Provider
+final class Is implements Implementation, Provider
 {
     /** @var pure-callable(T): bool */
     private $assert;
@@ -129,11 +133,11 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      *
      * @template E
      *
-     * @param Constraint\Implementation<mixed, E> $each
+     * @param Implementation<mixed, E> $each
      *
-     * @return Constraint\Implementation<mixed, list<E>>
+     * @return Implementation<mixed, list<E>>
      */
-    public static function list(?Constraint\Implementation $each = null): Constraint\Implementation
+    public static function list(?Implementation $each = null): Implementation
     {
         /** @var self<array, list<mixed>> */
         $list = new self(\array_is_list(...), 'list');
@@ -151,7 +155,7 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      *
      * @param non-empty-string $key
      */
-    public static function shape(string $key, Constraint\Implementation $constraint): Shape
+    public static function shape(string $key, Implementation $constraint): Shape
     {
         return Shape::of($key, $constraint);
     }
@@ -161,12 +165,12 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      * @template K
      * @template V
      *
-     * @param Constraint\Implementation<mixed, K> $key
-     * @param Constraint\Implementation<mixed, V> $value
+     * @param Implementation<mixed, K> $key
+     * @param Implementation<mixed, V> $value
      *
      * @return AssociativeArray<K, V>
      */
-    public static function associativeArray(Constraint\Implementation $key, Constraint\Implementation $value): AssociativeArray
+    public static function associativeArray(Implementation $key, Implementation $value): AssociativeArray
     {
         return AssociativeArray::of($key, $value);
     }
@@ -177,9 +181,9 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      *
      * @param ?non-empty-string $message
      *
-     * @return Constraint\Implementation<Maybe<V>, V>
+     * @return Implementation<Maybe<V>, V>
      */
-    public static function just(?string $message = null): Constraint\Implementation
+    public static function just(?string $message = null): Implementation
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
         return Of::callable(static fn(Maybe $value) => $value->match(
@@ -197,9 +201,9 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      * @param V $value
      * @param ?non-empty-string $message
      *
-     * @return Constraint\Implementation<mixed, V>
+     * @return Implementation<mixed, V>
      */
-    public static function value(mixed $value, ?string $message = null): Constraint\Implementation
+    public static function value(mixed $value, ?string $message = null): Implementation
     {
         return Of::callable(static fn(mixed $in) => match ($in) {
             $value => Validation::success($value),
@@ -225,12 +229,12 @@ final class Is implements Constraint\Implementation, Constraint\Provider
     /**
      * @template V
      *
-     * @param Constraint\Implementation<U, V> $constraint
+     * @param Implementation<U, V>|Provider<U, V>|Constraint<U, V> $constraint
      *
-     * @return Constraint\Implementation<T, V>
+     * @return AndConstraint<T, U, V>
      */
     #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation|Provider|Constraint $constraint): AndConstraint
     {
         return AndConstraint::of($this, $constraint);
     }
@@ -238,12 +242,12 @@ final class Is implements Constraint\Implementation, Constraint\Provider
     /**
      * @template V
      *
-     * @param Constraint\Implementation<T, V> $constraint
+     * @param Implementation<T, V>|Provider<T, V>|Constraint<T, V> $constraint
      *
-     * @return Constraint\Implementation<T, U|V>
+     * @return OrConstraint<T, U, V>
      */
     #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation|Provider|Constraint $constraint): OrConstraint
     {
         return OrConstraint::of($this, $constraint);
     }
@@ -253,10 +257,10 @@ final class Is implements Constraint\Implementation, Constraint\Provider
      *
      * @param callable(U): V $map
      *
-     * @return Constraint\Implementation<T, V>
+     * @return Implementation<T, V>
      */
     #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Implementation
     {
         return Map::of($this, $map);
     }
