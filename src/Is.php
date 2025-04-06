@@ -16,11 +16,10 @@ use Innmind\Immutable\{
 /**
  * @template-covariant T
  * @template-covariant U
- * @implements Implementation<T, U>
  * @implements Provider<T, U>
  * @psalm-immutable
  */
-final class Is implements Implementation, Provider
+final class Is implements Provider
 {
     /** @var pure-callable(T): bool */
     private $assert;
@@ -44,7 +43,11 @@ final class Is implements Implementation, Provider
         $this->message = $message;
     }
 
-    #[\Override]
+    /**
+     * @param T $value
+     *
+     * @return Validation<Failure, U>
+     */
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, U> */
@@ -59,7 +62,8 @@ final class Is implements Implementation, Provider
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
@@ -133,11 +137,11 @@ final class Is implements Implementation, Provider
      *
      * @template E
      *
-     * @param Implementation<mixed, E> $each
+     * @param Implementation<mixed, E>|Provider<mixed, E>|Constraint<mixed, E>|null $each
      *
-     * @return Implementation<mixed, list<E>>
+     * @return Constraint<mixed, list<E>>
      */
-    public static function list(?Implementation $each = null): Implementation
+    public static function list(Implementation|Provider|Constraint|null $each = null): Constraint
     {
         /** @var self<array, list<mixed>> */
         $list = new self(\array_is_list(...), 'list');
@@ -155,7 +159,7 @@ final class Is implements Implementation, Provider
      *
      * @param non-empty-string $key
      */
-    public static function shape(string $key, Implementation $constraint): Shape
+    public static function shape(string $key, Implementation|Provider|Constraint $constraint): Shape
     {
         return Shape::of($key, $constraint);
     }
@@ -165,13 +169,15 @@ final class Is implements Implementation, Provider
      * @template K
      * @template V
      *
-     * @param Implementation<mixed, K> $key
-     * @param Implementation<mixed, V> $value
+     * @param Implementation<mixed, K>|Provider<mixed, K>|Constraint<mixed, K> $key
+     * @param Implementation<mixed, V>|Provider<mixed, V>|Constraint<mixed, V> $value
      *
      * @return AssociativeArray<K, V>
      */
-    public static function associativeArray(Implementation $key, Implementation $value): AssociativeArray
-    {
+    public static function associativeArray(
+        Implementation|Provider|Constraint $key,
+        Implementation|Provider|Constraint $value,
+    ): AssociativeArray {
         return AssociativeArray::of($key, $value);
     }
 
@@ -229,27 +235,29 @@ final class Is implements Implementation, Provider
     /**
      * @template V
      *
-     * @param Implementation<U, V>|Provider<U, V>|Constraint<U, V> $constraint
+     * @param Provider<U, V>|Constraint<U, V> $constraint
      *
-     * @return AndConstraint<T, U, V>
+     * @return Constraint<T, V>
      */
-    #[\Override]
-    public function and(Implementation|Provider|Constraint $constraint): AndConstraint
+    public function and(Provider|Constraint $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and($constraint);
     }
 
     /**
      * @template V
      *
-     * @param Implementation<T, V>|Provider<T, V>|Constraint<T, V> $constraint
+     * @param Provider<T, V>|Constraint<T, V> $constraint
      *
-     * @return OrConstraint<T, U, V>
+     * @return Constraint<T, U|V>
      */
-    #[\Override]
-    public function or(Implementation|Provider|Constraint $constraint): OrConstraint
+    public function or(Provider|Constraint $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or($constraint);
     }
 
     /**
@@ -257,20 +265,22 @@ final class Is implements Implementation, Provider
      *
      * @param callable(U): V $map
      *
-     * @return Implementation<T, V>
+     * @return Constraint<T, V>
      */
-    #[\Override]
-    public function map(callable $map): Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return PredicateInterface<U>
      */
-    #[\Override]
     public function asPredicate(): PredicateInterface
     {
-        return Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 }

@@ -64,7 +64,7 @@ final class Shape implements Provider
         /** @psalm-suppress InvalidArgument */
         $validate = Constraint::of($this->validate(...));
 
-        return Constraint::build(Is::array())->and($validate);
+        return Is::array()->and($validate);
     }
 
     /**
