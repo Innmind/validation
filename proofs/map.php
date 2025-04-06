@@ -8,9 +8,9 @@ return static function() {
     yield proof(
         'Map::of()',
         given(
-            Set\Integers::any(),
-            Set\Integers::any(),
-            Set\Strings::any(),
+            Set::integers(),
+            Set::integers(),
+            Set::strings(),
         ),
         static function($assert, $initial, $new, $string) {
             $assert->same(

@@ -136,7 +136,7 @@ return static function() {
 
     yield proof(
         'Shape with optional key default',
-        given(Set\Type::any()),
+        given(Set::type()),
         static function($assert, $default) {
             $assert->same(
                 [
@@ -202,11 +202,11 @@ return static function() {
     yield proof(
         'Shape validates non arrays',
         given(
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     new stdClass,

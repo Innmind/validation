@@ -12,9 +12,9 @@ return static function() {
     yield proof(
         'Of::callable()',
         given(
-            Set\Type::any(),
-            Set\Type::any(),
-            Set\Strings::any(),
+            Set::type(),
+            Set::type(),
+            Set::strings(),
         ),
         static function($assert, $in, $out, $message) {
             $success = static fn($value) => match ($value) {

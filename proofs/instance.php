@@ -7,7 +7,7 @@ use Innmind\BlackBox\Set;
 return static function() {
     yield proof(
         'Instance::of()',
-        given(Set\Type::any()),
+        given(Set::type()),
         static function($assert, $other) {
             $std = new stdClass;
             $assert->true(

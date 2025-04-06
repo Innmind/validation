@@ -11,8 +11,8 @@ return static function() {
     yield proof(
         'Each::of()',
         given(
-            Set\Sequence::of(Set\Integers::any()),
-            Set\Sequence::of(Set\Strings::any())->atLeast(1),
+            Set::sequence(Set::integers()),
+            Set::sequence(Set::strings())->atLeast(1),
         ),
         static function($assert, $ints, $strings) {
             $assert->true(
@@ -56,7 +56,7 @@ return static function() {
     yield proof(
         'Each::of() returns the mapped content',
         given(
-            Set\Sequence::of(Set\Integers::any()),
+            Set::sequence(Set::integers()),
         ),
         static function($assert, $ints) {
             $doubles = \array_map(

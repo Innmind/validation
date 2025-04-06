@@ -22,7 +22,7 @@ return static function() {
                 \class_exists(FEarth\PointInTime::class) => FEarth\PointInTime::any(),
                 default => FPointInTime::any(),
             },
-            Set\Strings::any(),
+            Set::strings(),
         ),
         static function($assert, $point, $random) {
             $format = match (true) {
@@ -68,8 +68,8 @@ return static function() {
     yield proof(
         'PointInTime::ofFormat()->withFailure()',
         given(
-            Set\Strings::atLeast(1),
-            Set\Strings::any(),
+            Set::strings()->atLeast(1),
+            Set::strings(),
         ),
         static function($assert, $expected, $random) {
             $format = match (true) {

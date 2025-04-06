@@ -8,19 +8,19 @@ return static function() {
     yield proof(
         'Has::key()',
         given(
-            Set\Composite::immutable(
+            Set::compose(
                 static fn($keys, $values) => \array_combine(
                     \array_slice($keys, 0, \min(\count($keys), \count($values))),
                     \array_slice($values, 0, \min(\count($keys), \count($values))),
                 ),
-                Set\Sequence::of(Set\Either::any(
-                    Set\Integers::any(),
-                    Set\Strings::any(),
+                Set::sequence(Set::either(
+                    Set::integers(),
+                    Set::strings(),
                 ))->atLeast(1),
-                Set\Sequence::of(Set\Type::any())->atLeast(1),
+                Set::sequence(Set::type())->atLeast(1),
             ),
-            Set\Strings::atLeast(1),
-            Set\Type::any(),
+            Set::strings()->atLeast(1),
+            Set::type(),
         ),
         static function($assert, $array, $key, $value) {
             unset($array[$key]);
@@ -61,19 +61,19 @@ return static function() {
     yield proof(
         'Has::key()->withFailure()',
         given(
-            Set\Composite::immutable(
+            Set::compose(
                 static fn($keys, $values) => \array_combine(
                     \array_slice($keys, 0, \min(\count($keys), \count($values))),
                     \array_slice($values, 0, \min(\count($keys), \count($values))),
                 ),
-                Set\Sequence::of(Set\Either::any(
-                    Set\Integers::any(),
-                    Set\Strings::any(),
+                Set::sequence(Set::either(
+                    Set::integers(),
+                    Set::strings(),
                 ))->atLeast(1),
-                Set\Sequence::of(Set\Type::any())->atLeast(1),
+                Set::sequence(Set::type())->atLeast(1),
             ),
-            Set\Strings::atLeast(1),
-            Set\Strings::atLeast(1),
+            Set::strings()->atLeast(1),
+            Set::strings()->atLeast(1),
         ),
         static function($assert, $array, $key, $expected) {
             unset($array[$key]);
