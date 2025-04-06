@@ -11,7 +11,7 @@ use Innmind\TimeContinuum\{
 };
 use Innmind\Immutable\{
     Validation,
-    Predicate as PredicateInterface,
+    Predicate,
 };
 
 /**
@@ -125,9 +125,9 @@ final class PointInTime implements Provider
     }
 
     /**
-     * @return PredicateInterface<PointInTimeInterface>
+     * @return Predicate<PointInTimeInterface>
      */
-    public function asPredicate(): PredicateInterface
+    public function asPredicate(): Predicate
     {
         return $this
             ->toConstraint()

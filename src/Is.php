@@ -10,7 +10,7 @@ use Innmind\Validation\Constraint\{
 use Innmind\Immutable\{
     Validation,
     Maybe,
-    Predicate as PredicateInterface,
+    Predicate,
 };
 
 /**
@@ -275,9 +275,9 @@ final class Is implements Provider
     }
 
     /**
-     * @return PredicateInterface<U>
+     * @return Predicate<U>
      */
-    public function asPredicate(): PredicateInterface
+    public function asPredicate(): Predicate
     {
         return $this
             ->toConstraint()

@@ -6,7 +6,7 @@ namespace Innmind\Validation;
 use Innmind\Validation\Constraint\Provider;
 use Innmind\Immutable\{
     Validation,
-    Predicate as PredicateInterface,
+    Predicate,
 };
 
 /**
@@ -118,9 +118,9 @@ final class Has implements Provider
     }
 
     /**
-     * @return PredicateInterface<mixed>
+     * @return Predicate<mixed>
      */
-    public function asPredicate(): PredicateInterface
+    public function asPredicate(): Predicate
     {
         return $this
             ->toConstraint()

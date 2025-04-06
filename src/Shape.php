@@ -9,7 +9,7 @@ use Innmind\Validation\Constraint\{
 };
 use Innmind\Immutable\{
     Validation,
-    Predicate as PredicateInterface,
+    Predicate,
 };
 
 /**
@@ -231,9 +231,9 @@ final class Shape implements Provider
     }
 
     /**
-     * @return PredicateInterface<non-empty-array<non-empty-string, mixed>>
+     * @return Predicate<non-empty-array<non-empty-string, mixed>>
      */
-    public function asPredicate(): PredicateInterface
+    public function asPredicate(): Predicate
     {
         return $this
             ->toConstraint()
