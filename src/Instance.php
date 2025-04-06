@@ -61,29 +61,29 @@ final class Instance implements Constraint\Provider
     /**
      * @template V
      *
-     * @param Constraint\Implementation<T, V> $constraint
+     * @param Constraint<T, V> $constraint
      *
      * @return Constraint<mixed, V>
      */
-    public function and(Constraint\Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template V
      *
-     * @param Constraint\Implementation<mixed, V> $constraint
+     * @param Constraint<mixed, V> $constraint
      *
      * @return Constraint<mixed, T|V>
      */
-    public function or(Constraint\Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**

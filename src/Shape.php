@@ -191,29 +191,29 @@ final class Shape implements Provider
     /**
      * @template T
      *
-     * @param Implementation<non-empty-array<non-empty-string, mixed>, T> $constraint
+     * @param Constraint<non-empty-array<non-empty-string, mixed>, T> $constraint
      *
      * @return Constraint<mixed, T>
      */
-    public function and(Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template T
      *
-     * @param Implementation<mixed, T> $constraint
+     * @param Constraint<mixed, T> $constraint
      *
      * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>|T>
      */
-    public function or(Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**
@@ -258,12 +258,12 @@ final class Shape implements Provider
 
             if (\in_array($key, $this->optional, true)) {
                 /** @psalm-suppress MixedArgumentTypeCoercion */
-                $keyValidation = $keyValidation->or(Of::callable(
+                $keyValidation = $keyValidation->or(Constraint::of(
                     static fn() => Validation::success($optional),
                 ));
             }
 
-            $ofType = Of::callable(
+            $ofType = Constraint::of(
                 static fn($value) => match ($value) {
                     $optional => Validation::success($optional),
                     default => $constraint($value)->mapFailures(

@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\{
-    Implementation,
-    Provider,
-};
+use Innmind\Validation\Constraint\Provider;
 use Innmind\Immutable\{
     Validation,
     Predicate as PredicateInterface,
@@ -81,29 +78,29 @@ final class Has implements Provider
     /**
      * @template T
      *
-     * @param Implementation<mixed, T> $constraint
+     * @param Constraint<mixed, T> $constraint
      *
      * @return Constraint<array, T>
      */
-    public function and(Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template T
      *
-     * @param Implementation<array, T> $constraint
+     * @param Constraint<array, T> $constraint
      *
      * @return Constraint<array, mixed|T>
      */
-    public function or(Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**

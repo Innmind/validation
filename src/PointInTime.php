@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\{
-    Implementation,
-    Provider,
-};
+use Innmind\Validation\Constraint\Provider;
 use Innmind\TimeContinuum\{
     Clock,
     Format,
@@ -88,29 +85,29 @@ final class PointInTime implements Provider
     /**
      * @template T
      *
-     * @param Implementation<PointInTimeInterface, T> $constraint
+     * @param Constraint<PointInTimeInterface, T> $constraint
      *
      * @return Constraint<string, T>
      */
-    public function and(Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template T
      *
-     * @param Implementation<string, T> $constraint
+     * @param Constraint<string, T> $constraint
      *
      * @return Constraint<string, PointInTimeInterface|T>
      */
-    public function or(Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**

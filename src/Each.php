@@ -79,29 +79,29 @@ final class Each implements Provider
     /**
      * @template V
      *
-     * @param Implementation<list<T>, V> $constraint
+     * @param Constraint<list<T>, V> $constraint
      *
      * @return Constraint<list, V>
      */
-    public function and(Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template V
      *
-     * @param Implementation<list, V> $constraint
+     * @param Constraint<list, V> $constraint
      *
      * @return Constraint<list, list<T>|V>
      */
-    public function or(Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**

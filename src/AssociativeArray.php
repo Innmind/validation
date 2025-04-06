@@ -71,29 +71,29 @@ final class AssociativeArray implements Provider
     /**
      * @template T
      *
-     * @param Implementation<Map<K, V>, T> $constraint
+     * @param Constraint<Map<K, V>, T> $constraint
      *
      * @return Constraint<mixed, T>
      */
-    public function and(Implementation $constraint): Constraint
+    public function and(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->and(Constraint::build($constraint));
+            ->and($constraint);
     }
 
     /**
      * @template T
      *
-     * @param Implementation<mixed, T> $constraint
+     * @param Constraint<mixed, T> $constraint
      *
      * @return Constraint<mixed, Map<K, V>|T>
      */
-    public function or(Implementation $constraint): Constraint
+    public function or(Constraint $constraint): Constraint
     {
         return $this
             ->toConstraint()
-            ->or(Constraint::build($constraint));
+            ->or($constraint);
     }
 
     /**
