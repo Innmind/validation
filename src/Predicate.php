@@ -6,6 +6,7 @@ namespace Innmind\Validation;
 use Innmind\Immutable\Predicate as PredicateInterface;
 
 /**
+ * @internal
  * @template T
  * @implements PredicateInterface<T>
  * @psalm-immutable
@@ -33,6 +34,7 @@ final class Predicate implements PredicateInterface
     }
 
     /**
+     * @internal
      * @template A
      * @psalm-pure
      *
