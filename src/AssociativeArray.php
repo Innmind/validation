@@ -14,9 +14,10 @@ use Innmind\Immutable\{
  * @template K
  * @template V
  * @implements Constraint\Implementation<mixed, Map<K, V>>
+ * @implements Constraint\Provider<mixed, Map<K, V>>
  * @psalm-immutable
  */
-final class AssociativeArray implements Constraint\Implementation
+final class AssociativeArray implements Constraint\Implementation, Constraint\Provider
 {
     private function __construct(
         /** @var Constraint\Implementation<mixed, K> */
@@ -30,6 +31,12 @@ final class AssociativeArray implements Constraint\Implementation
     public function __invoke(mixed $value): Validation
     {
         return Is::array()($value)->flatMap($this->validate(...));
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

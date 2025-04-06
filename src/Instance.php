@@ -11,9 +11,10 @@ use Innmind\Immutable\{
 /**
  * @template-covariant T of object
  * @implements Constraint\Implementation<mixed, T>
+ * @implements Constraint\Provider<mixed, T>
  * @psalm-immutable
  */
-final class Instance implements Constraint\Implementation
+final class Instance implements Constraint\Implementation, Constraint\Provider
 {
     /** @var class-string<T> */
     private string $class;
@@ -34,6 +35,12 @@ final class Instance implements Constraint\Implementation
             true => Validation::success($value),
             false => Validation::fail(Failure::of("Value is not an instance of {$this->class}")),
         };
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

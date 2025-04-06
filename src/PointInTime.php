@@ -15,9 +15,10 @@ use Innmind\Immutable\{
 
 /**
  * @implements Constraint\Implementation<string, PointInTimeInterface>
+ * @implements Constraint\Provider<string, PointInTimeInterface>
  * @psalm-immutable
  */
-final class PointInTime implements Constraint\Implementation
+final class PointInTime implements Constraint\Implementation, Constraint\Provider
 {
     private Clock $clock;
     private Format $format;
@@ -52,6 +53,12 @@ final class PointInTime implements Constraint\Implementation
                 $this->message ?? "Value is not a date of format {$this->format->toString()}",
             )),
         );
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

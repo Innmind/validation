@@ -13,9 +13,10 @@ use Innmind\Immutable\{
  * @template-covariant B
  * @template-covariant C
  * @implements Constraint\Implementation<A, B|C>
+ * @implements Constraint\Provider<A, B|C>
  * @psalm-immutable
  */
-final class OrConstraint implements Constraint\Implementation
+final class OrConstraint implements Constraint\Implementation, Constraint\Provider
 {
     /** @var Constraint\Implementation<A, B> */
     private Constraint\Implementation $a;
@@ -39,6 +40,12 @@ final class OrConstraint implements Constraint\Implementation
         return ($this->a)($input)->otherwise(
             fn() => ($this->b)($input),
         );
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

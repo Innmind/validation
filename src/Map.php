@@ -13,9 +13,10 @@ use Innmind\Immutable\{
  * @template-covariant O
  * @template-covariant T
  * @implements Constraint\Implementation<I, T>
+ * @implements Constraint\Provider<I, T>
  * @psalm-immutable
  */
-final class Map implements Constraint\Implementation
+final class Map implements Constraint\Implementation, Constraint\Provider
 {
     /** @var Constraint\Implementation<I, O> */
     private Constraint\Implementation $constraint;
@@ -37,6 +38,12 @@ final class Map implements Constraint\Implementation
     {
         /** @psalm-suppress ImpureFunctionCall */
         return ($this->constraint)($value)->map($this->map);
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

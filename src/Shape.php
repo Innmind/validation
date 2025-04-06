@@ -10,9 +10,10 @@ use Innmind\Immutable\{
 
 /**
  * @implements Constraint\Implementation<mixed, non-empty-array<non-empty-string, mixed>>
+ * @implements Constraint\Provider<mixed, non-empty-array<non-empty-string, mixed>>
  * @psalm-immutable
  */
-final class Shape implements Constraint\Implementation
+final class Shape implements Constraint\Implementation, Constraint\Provider
 {
     /** @var non-empty-array<non-empty-string, Constraint\Implementation<mixed, mixed>> */
     private array $constraints;
@@ -50,6 +51,12 @@ final class Shape implements Constraint\Implementation
     public function __invoke(mixed $value): Validation
     {
         return Is::array()($value)->flatMap($this->validate(...));
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

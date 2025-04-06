@@ -13,9 +13,10 @@ use Innmind\Immutable\{
  * @template-covariant B
  * @template-covariant C
  * @implements Constraint\Implementation<A, C>
+ * @implements Constraint\Provider<A, C>
  * @psalm-immutable
  */
-final class AndConstraint implements Constraint\Implementation
+final class AndConstraint implements Constraint\Implementation, Constraint\Provider
 {
     /** @var Constraint\Implementation<A, B> */
     private Constraint\Implementation $a;
@@ -39,6 +40,12 @@ final class AndConstraint implements Constraint\Implementation
         return ($this->a)($input)->flatMap(
             fn($value) => ($this->b)($value),
         );
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

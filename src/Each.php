@@ -11,9 +11,10 @@ use Innmind\Immutable\{
 /**
  * @template T
  * @implements Constraint\Implementation<list, list<T>>
+ * @implements Constraint\Provider<list, list<T>>
  * @psalm-immutable
  */
-final class Each implements Constraint\Implementation
+final class Each implements Constraint\Implementation, Constraint\Provider
 {
     /** @var Constraint\Implementation<mixed, T> */
     private Constraint\Implementation $constraint;
@@ -42,6 +43,12 @@ final class Each implements Constraint\Implementation
         }
 
         return $validation;
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

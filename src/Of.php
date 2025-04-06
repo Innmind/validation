@@ -12,9 +12,10 @@ use Innmind\Immutable\{
  * @template-covariant A
  * @template-covariant B
  * @implements Constraint\Implementation<A, B>
+ * @implements Constraint\Provider<A, B>
  * @psalm-immutable
  */
-final class Of implements Constraint\Implementation
+final class Of implements Constraint\Implementation, Constraint\Provider
 {
     /** @var pure-callable(A): Validation<Failure, B> */
     private $assert;
@@ -31,6 +32,12 @@ final class Of implements Constraint\Implementation
     public function __invoke(mixed $value): Validation
     {
         return ($this->assert)($value);
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

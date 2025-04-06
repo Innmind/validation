@@ -13,9 +13,10 @@ use Innmind\Immutable\{
  * @template-covariant T
  * @template-covariant U
  * @implements Constraint\Implementation<T, U>
+ * @implements Constraint\Provider<T, U>
  * @psalm-immutable
  */
-final class Is implements Constraint\Implementation
+final class Is implements Constraint\Implementation, Constraint\Provider
 {
     /** @var pure-callable(T): bool */
     private $assert;
@@ -49,6 +50,12 @@ final class Is implements Constraint\Implementation
                 $this->message ?? "Value is not of type {$this->type}",
             )),
         };
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**

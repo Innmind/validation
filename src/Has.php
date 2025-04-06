@@ -10,9 +10,10 @@ use Innmind\Immutable\{
 
 /**
  * @implements Constraint\Implementation<array, mixed>
+ * @implements Constraint\Provider<array, mixed>
  * @psalm-immutable
  */
-final class Has implements Constraint\Implementation
+final class Has implements Constraint\Implementation, Constraint\Provider
 {
     /** @var non-empty-string */
     private string $key;
@@ -39,6 +40,12 @@ final class Has implements Constraint\Implementation
                 ($this->message)($this->key),
             )),
         };
+    }
+
+    #[\Override]
+    public function toConstraint(): Constraint
+    {
+        return Constraint::build($this);
     }
 
     /**
