@@ -3,19 +3,22 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate as PredicateInterface,
 };
 
 /**
- * @implements Constraint\Implementation<mixed, non-empty-array<non-empty-string, mixed>>
- * @implements Constraint\Provider<mixed, non-empty-array<non-empty-string, mixed>>
+ * @implements Provider<mixed, non-empty-array<non-empty-string, mixed>>
  * @psalm-immutable
  */
-final class Shape implements Constraint\Implementation, Constraint\Provider
+final class Shape implements Provider
 {
-    /** @var non-empty-array<non-empty-string, Constraint\Implementation<mixed, mixed>> */
+    /** @var non-empty-array<non-empty-string, Implementation<mixed, mixed>|Constraint<mixed, mixed>> */
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
@@ -27,7 +30,7 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
     private $message;
 
     /**
-     * @param non-empty-array<non-empty-string, Constraint\Implementation<mixed, mixed>> $constraints
+     * @param non-empty-array<non-empty-string, Implementation<mixed, mixed>|Constraint<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
      * @param array<non-empty-string, mixed> $defaults
      * @param array<non-empty-string, non-empty-string> $rename
@@ -47,16 +50,21 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
         $this->message = $message;
     }
 
-    #[\Override]
-    public function __invoke(mixed $value): Validation
+    /**
+     * @return Validation<Failure, non-empty-array<non-empty-string, mixed>>
+     */
+    public function __invoke(mixed $input): Validation
     {
-        return Is::array()($value)->flatMap($this->validate(...));
+        return $this->toConstraint()($input);
     }
 
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        $validate = Constraint::of($this->validate(...));
+
+        return Constraint::build(Is::array())->and($validate);
     }
 
     /**
@@ -64,8 +72,12 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
      *
      * @param non-empty-string $key
      */
-    public static function of(string $key, Constraint\Implementation $constraint): self
+    public static function of(string $key, Implementation|Provider|Constraint $constraint): self
     {
+        if ($constraint instanceof Provider) {
+            $constraint = $constraint->toConstraint();
+        }
+
         return new self(
             [$key => $constraint],
             [],
@@ -78,8 +90,12 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
     /**
      * @param non-empty-string $key
      */
-    public function with(string $key, Constraint\Implementation $constraint): self
+    public function with(string $key, Implementation|Provider|Constraint $constraint): self
     {
+        if ($constraint instanceof Provider) {
+            $constraint = $constraint->toConstraint();
+        }
+
         $constraints = $this->constraints;
         $constraints[$key] = $constraint;
 
@@ -95,13 +111,17 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
     /**
      * @param non-empty-string $key
      */
-    public function optional(string $key, ?Constraint\Implementation $constraint = null): self
+    public function optional(string $key, Implementation|Provider|Constraint|null $constraint = null): self
     {
         $optional = $this->optional;
         $optional[] = $key;
         $constraints = $this->constraints;
 
-        if ($constraint instanceof Constraint\Implementation) {
+        if (!\is_null($constraint)) {
+            if ($constraint instanceof Provider) {
+                $constraint = $constraint->toConstraint();
+            }
+
             $constraints[$key] = $constraint;
         }
 
@@ -171,27 +191,29 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
     /**
      * @template T
      *
-     * @param Constraint\Implementation<non-empty-array<non-empty-string, mixed>, T> $constraint
+     * @param Implementation<non-empty-array<non-empty-string, mixed>, T> $constraint
      *
-     * @return Constraint\Implementation<mixed, T>
+     * @return Constraint<mixed, T>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<mixed, T> $constraint
+     * @param Implementation<mixed, T> $constraint
      *
-     * @return Constraint\Implementation<mixed, non-empty-array<non-empty-string, mixed>|T>
+     * @return Constraint<mixed, non-empty-array<non-empty-string, mixed>|T>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -199,21 +221,23 @@ final class Shape implements Constraint\Implementation, Constraint\Provider
      *
      * @param callable(non-empty-array<non-empty-string, mixed>): T $map
      *
-     * @return Constraint\Implementation<mixed, T>
+     * @return Constraint<mixed, T>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return PredicateInterface<non-empty-array<non-empty-string, mixed>>
      */
-    #[\Override]
     public function asPredicate(): PredicateInterface
     {
-        return Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 
     /**
