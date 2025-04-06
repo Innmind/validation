@@ -3,6 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\TimeContinuum\{
     Clock,
     Format,
@@ -14,11 +18,10 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Constraint\Implementation<string, PointInTimeInterface>
- * @implements Constraint\Provider<string, PointInTimeInterface>
+ * @implements Provider<string, PointInTimeInterface>
  * @psalm-immutable
  */
-final class PointInTime implements Constraint\Implementation, Constraint\Provider
+final class PointInTime implements Provider
 {
     private Clock $clock;
     private Format $format;
@@ -38,7 +41,11 @@ final class PointInTime implements Constraint\Implementation, Constraint\Provide
         $this->message = $message;
     }
 
-    #[\Override]
+    /**
+     * @param string $value
+     *
+     * @return Validation<Failure, PointInTimeInterface>
+     */
     public function __invoke(mixed $value): Validation
     {
         if ($value === '') {
@@ -58,7 +65,8 @@ final class PointInTime implements Constraint\Implementation, Constraint\Provide
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
@@ -80,27 +88,29 @@ final class PointInTime implements Constraint\Implementation, Constraint\Provide
     /**
      * @template T
      *
-     * @param Constraint\Implementation<PointInTimeInterface, T> $constraint
+     * @param Implementation<PointInTimeInterface, T> $constraint
      *
-     * @return Constraint\Implementation<string, T>
+     * @return Constraint<string, T>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<string, T> $constraint
+     * @param Implementation<string, T> $constraint
      *
-     * @return Constraint\Implementation<string, PointInTimeInterface|T>
+     * @return Constraint<string, PointInTimeInterface|T>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -108,20 +118,22 @@ final class PointInTime implements Constraint\Implementation, Constraint\Provide
      *
      * @param callable(PointInTimeInterface): T $map
      *
-     * @return Constraint\Implementation<string, T>
+     * @return Constraint<string, T>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return PredicateInterface<PointInTimeInterface>
      */
-    #[\Override]
     public function asPredicate(): PredicateInterface
     {
-        return Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 }
