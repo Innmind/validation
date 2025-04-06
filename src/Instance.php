@@ -10,11 +10,10 @@ use Innmind\Immutable\{
 
 /**
  * @template-covariant T of object
- * @implements Constraint\Implementation<mixed, T>
  * @implements Constraint\Provider<mixed, T>
  * @psalm-immutable
  */
-final class Instance implements Constraint\Implementation, Constraint\Provider
+final class Instance implements Constraint\Provider
 {
     /** @var class-string<T> */
     private string $class;
@@ -27,7 +26,9 @@ final class Instance implements Constraint\Implementation, Constraint\Provider
         $this->class = $class;
     }
 
-    #[\Override]
+    /**
+     * @return Validation<Failure, T>
+     */
     public function __invoke(mixed $value): Validation
     {
         /** @var Validation<Failure, T> */
@@ -40,7 +41,8 @@ final class Instance implements Constraint\Implementation, Constraint\Provider
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
@@ -61,12 +63,13 @@ final class Instance implements Constraint\Implementation, Constraint\Provider
      *
      * @param Constraint\Implementation<T, V> $constraint
      *
-     * @return Constraint\Implementation<mixed, V>
+     * @return Constraint<mixed, V>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Constraint\Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
@@ -74,12 +77,13 @@ final class Instance implements Constraint\Implementation, Constraint\Provider
      *
      * @param Constraint\Implementation<mixed, V> $constraint
      *
-     * @return Constraint\Implementation<mixed, T|V>
+     * @return Constraint<mixed, T|V>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Constraint\Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -87,20 +91,22 @@ final class Instance implements Constraint\Implementation, Constraint\Provider
      *
      * @param callable(T): V $map
      *
-     * @return Constraint\Implementation<mixed, V>
+     * @return Constraint<mixed, V>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return Predicate<T>
      */
-    #[\Override]
     public function asPredicate(): Predicate
     {
-        return namespace\Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 }
