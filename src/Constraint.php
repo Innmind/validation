@@ -34,6 +34,20 @@ final class Constraint
     }
 
     /**
+     * @template T
+     * @template U
+     * @psalm-pure
+     *
+     * @param pure-callable(T): Validation<Failure, U> $assert
+     *
+     * @return self<T, U>
+     */
+    public static function of(callable $assert): self
+    {
+        return new self(Of::callable($assert));
+    }
+
+    /**
      * @psalm-pure
      * @template A
      * @template B
@@ -42,7 +56,7 @@ final class Constraint
      *
      * @return self<A, B>
      */
-    public static function of(
+    public static function build(
         Implementation $implementation,
     ): self {
         return new self($implementation);

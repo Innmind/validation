@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 use Innmind\Validation\{
-    Of,
+    Constraint,
     Failure,
 };
 use Innmind\Immutable\Validation;
@@ -10,7 +10,7 @@ use Innmind\BlackBox\Set;
 
 return static function() {
     yield proof(
-        'Of::callable()',
+        'Constraint::of()',
         given(
             Set\Type::any(),
             Set\Type::any(),
@@ -24,21 +24,21 @@ return static function() {
             $fail = static fn() => Validation::fail(Failure::of($message));
 
             $assert->true(
-                Of::callable($success)->asPredicate()($in),
+                Constraint::of($success)->asPredicate()($in),
             );
             $assert->same(
                 $out,
-                Of::callable($success)($in)->match(
+                Constraint::of($success)($in)->match(
                     static fn($value) => $value,
                     static fn() => null,
                 ),
             );
             $assert->false(
-                Of::callable($fail)->asPredicate()($in),
+                Constraint::of($fail)->asPredicate()($in),
             );
             $assert->same(
                 [['$', $message]],
-                Of::callable($fail)($in)->match(
+                Constraint::of($fail)($in)->match(
                     static fn() => null,
                     static fn($failures) => $failures
                         ->map(static fn($failure) => [
