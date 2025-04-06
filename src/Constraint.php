@@ -90,7 +90,7 @@ final class Constraint
      */
     public function or(self|Provider $constraint): self
     {
-        return new self(OrConstraint::of(
+        return new self(Constraint\OrConstraint::of(
             $this->implementation,
             self::collapse($constraint)->implementation,
         ));
