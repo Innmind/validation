@@ -7,10 +7,7 @@ use Innmind\Validation\Constraint\{
     Implementation,
     Provider,
 };
-use Innmind\Immutable\{
-    Validation,
-    Predicate as PredicateInterface,
-};
+use Innmind\Immutable\Validation;
 
 /**
  * @template-covariant A
@@ -74,53 +71,5 @@ final class AndConstraint implements Implementation, Provider
         }
 
         return new self($a, $b);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Implementation<C, T>|Provider<C, T>|Constraint<C, T> $constraint
-     *
-     * @return self<A, C, T>
-     */
-    #[\Override]
-    public function and(Implementation|Provider|Constraint $constraint): self
-    {
-        return self::of($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Implementation<A, T>|Provider<A, T>|Constraint<A, T> $constraint
-     *
-     * @return Implementation<A, C|T>
-     */
-    #[\Override]
-    public function or(Implementation|Provider|Constraint $constraint): Implementation
-    {
-        return OrConstraint::of($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param callable(C): T $map
-     *
-     * @return Implementation<A, T>
-     */
-    #[\Override]
-    public function map(callable $map): Implementation
-    {
-        return Map::of($this, $map);
-    }
-
-    /**
-     * @return PredicateInterface<C>
-     */
-    #[\Override]
-    public function asPredicate(): PredicateInterface
-    {
-        return Predicate::of($this);
     }
 }

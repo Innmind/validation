@@ -3,15 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation\Constraint;
 
-use Innmind\Validation\{
-    Map,
-    OrConstraint,
-    Predicate,
-};
-use Innmind\Immutable\{
-    Validation,
-    Predicate as PredicateInterface,
-};
+use Innmind\Immutable\Validation;
 
 /**
  * @internal
@@ -62,53 +54,5 @@ final class AndConstraint implements Implementation
     public static function of(Implementation $a, Implementation $b): self
     {
         return new self($a, $b);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Implementation<C, T> $constraint
-     *
-     * @return self<A, C, T>
-     */
-    #[\Override]
-    public function and(Implementation $constraint): self
-    {
-        return new self($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Implementation<A, T> $constraint
-     *
-     * @return Implementation<A, C|T>
-     */
-    #[\Override]
-    public function or(Implementation $constraint): Implementation
-    {
-        return OrConstraint::of($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param callable(C): T $map
-     *
-     * @return Implementation<A, T>
-     */
-    #[\Override]
-    public function map(callable $map): Implementation
-    {
-        return Map::of($this, $map);
-    }
-
-    /**
-     * @return PredicateInterface<C>
-     */
-    #[\Override]
-    public function asPredicate(): PredicateInterface
-    {
-        return Predicate::of($this);
     }
 }
