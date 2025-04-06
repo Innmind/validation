@@ -3,17 +3,20 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate as PredicateInterface,
 };
 
 /**
- * @implements Constraint\Implementation<array, mixed>
- * @implements Constraint\Provider<array, mixed>
+ * @implements Provider<array, mixed>
  * @psalm-immutable
  */
-final class Has implements Constraint\Implementation, Constraint\Provider
+final class Has implements Provider
 {
     /** @var non-empty-string */
     private string $key;
@@ -30,7 +33,10 @@ final class Has implements Constraint\Implementation, Constraint\Provider
         $this->message = $message;
     }
 
-    #[\Override]
+    /**
+     * @param array $value
+     * @return Validation<Failure, mixed>
+     */
     public function __invoke(mixed $value): Validation
     {
         /** @psalm-suppress ImpureFunctionCall */
@@ -45,7 +51,8 @@ final class Has implements Constraint\Implementation, Constraint\Provider
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
@@ -74,27 +81,29 @@ final class Has implements Constraint\Implementation, Constraint\Provider
     /**
      * @template T
      *
-     * @param Constraint\Implementation<mixed, T> $constraint
+     * @param Implementation<mixed, T> $constraint
      *
-     * @return Constraint\Implementation<array, T>
+     * @return Constraint<array, T>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<array, T> $constraint
+     * @param Implementation<array, T> $constraint
      *
-     * @return Constraint\Implementation<array, mixed|T>
+     * @return Constraint<array, mixed|T>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -102,20 +111,22 @@ final class Has implements Constraint\Implementation, Constraint\Provider
      *
      * @param callable(mixed): T $map
      *
-     * @return Constraint\Implementation<array, T>
+     * @return Constraint<array, T>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return PredicateInterface<mixed>
      */
-    #[\Override]
     public function asPredicate(): PredicateInterface
     {
-        return Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 }
