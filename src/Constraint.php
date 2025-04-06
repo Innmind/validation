@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\Implementation;
 use Innmind\Immutable\{
     Validation,
     Predicate,
@@ -13,13 +14,39 @@ use Innmind\Immutable\{
  * @template-covariant O
  * @psalm-immutable
  */
-interface Constraint
+final class Constraint
 {
+    /**
+     * @param Implementation<I, O> $implementation
+     */
+    private function __construct(
+        private Implementation $implementation,
+    ) {
+    }
+
     /**
      * @param I $input
      * @return Validation<Failure, O>
      */
-    public function __invoke(mixed $input): Validation;
+    public function __invoke(mixed $input): Validation
+    {
+        return ($this->implementation)($input);
+    }
+
+    /**
+     * @psalm-pure
+     * @template A
+     * @template B
+     *
+     * @param Implementation<A, B> $implementation
+     *
+     * @return self<A, B>
+     */
+    public static function of(
+        Implementation $implementation,
+    ): self {
+        return new self($implementation);
+    }
 
     /**
      * @template T
@@ -28,7 +55,13 @@ interface Constraint
      *
      * @return self<I, T>
      */
-    public function and(self $constraint): self;
+    public function and(self $constraint): self
+    {
+        return new self(AndConstraint::of(
+            $this->implementation,
+            $constraint->implementation,
+        ));
+    }
 
     /**
      * @template T
@@ -37,7 +70,13 @@ interface Constraint
      *
      * @return self<I, O|T>
      */
-    public function or(self $constraint): self;
+    public function or(self $constraint): self
+    {
+        return new self(OrConstraint::of(
+            $this->implementation,
+            $constraint->implementation,
+        ));
+    }
 
     /**
      * @template T
@@ -46,10 +85,19 @@ interface Constraint
      *
      * @return self<I, T>
      */
-    public function map(callable $map): self;
+    public function map(callable $map): self
+    {
+        return new self(Map::of(
+            $this->implementation,
+            $map,
+        ));
+    }
 
     /**
      * @return Predicate<O>
      */
-    public function asPredicate(): Predicate;
+    public function asPredicate(): Predicate
+    {
+        return namespace\Predicate::of($this->implementation);
+    }
 }
