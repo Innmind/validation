@@ -3,6 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
+use Innmind\Validation\Constraint\{
+    Implementation,
+    Provider,
+};
 use Innmind\Immutable\{
     Validation,
     Map,
@@ -13,21 +17,22 @@ use Innmind\Immutable\{
 /**
  * @template K
  * @template V
- * @implements Constraint\Implementation<mixed, Map<K, V>>
- * @implements Constraint\Provider<mixed, Map<K, V>>
+ * @implements Provider<mixed, Map<K, V>>
  * @psalm-immutable
  */
-final class AssociativeArray implements Constraint\Implementation, Constraint\Provider
+final class AssociativeArray implements Provider
 {
     private function __construct(
-        /** @var Constraint\Implementation<mixed, K> */
-        private Constraint\Implementation $key,
-        /** @var Constraint\Implementation<mixed, V> */
-        private Constraint\Implementation $value,
+        /** @var Implementation<mixed, K>|Constraint<mixed, K> */
+        private Implementation|Constraint $key,
+        /** @var Implementation<mixed, V>|Constraint<mixed, V> */
+        private Implementation|Constraint $value,
     ) {
     }
 
-    #[\Override]
+    /**
+     * @return Validation<Failure, Map<K, V>>
+     */
     public function __invoke(mixed $value): Validation
     {
         return Is::array()($value)->flatMap($this->validate(...));
@@ -36,7 +41,8 @@ final class AssociativeArray implements Constraint\Implementation, Constraint\Pr
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::build($this);
+        /** @psalm-suppress InvalidArgument */
+        return Constraint::of($this(...));
     }
 
     /**
@@ -44,40 +50,50 @@ final class AssociativeArray implements Constraint\Implementation, Constraint\Pr
      * @template A
      * @template B
      *
-     * @param Constraint\Implementation<mixed, A> $key
-     * @param Constraint\Implementation<mixed, B> $value
+     * @param Implementation<mixed, A>|Provider<mixed, A>|Constraint<mixed, A> $key
+     * @param Implementation<mixed, B>|Provider<mixed, B>|Constraint<mixed, B> $value
      *
      * @return self<A, B>
      */
-    public static function of(Constraint\Implementation $key, Constraint\Implementation $value): self
+    public static function of(Implementation|Provider|Constraint $key, Implementation|Provider|Constraint $value): self
     {
+        if ($key instanceof Provider) {
+            $key = $key->toConstraint();
+        }
+
+        if ($value instanceof Provider) {
+            $value = $value->toConstraint();
+        }
+
         return new self($key, $value);
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<Map<K, V>, T> $constraint
+     * @param Implementation<Map<K, V>, T> $constraint
      *
-     * @return Constraint\Implementation<mixed, T>
+     * @return Constraint<mixed, T>
      */
-    #[\Override]
-    public function and(Constraint\Implementation $constraint): Constraint\Implementation
+    public function and(Implementation $constraint): Constraint
     {
-        return AndConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->and(Constraint::build($constraint));
     }
 
     /**
      * @template T
      *
-     * @param Constraint\Implementation<mixed, T> $constraint
+     * @param Implementation<mixed, T> $constraint
      *
-     * @return Constraint\Implementation<mixed, Map<K, V>|T>
+     * @return Constraint<mixed, Map<K, V>|T>
      */
-    #[\Override]
-    public function or(Constraint\Implementation $constraint): Constraint\Implementation
+    public function or(Implementation $constraint): Constraint
     {
-        return OrConstraint::of($this, $constraint);
+        return $this
+            ->toConstraint()
+            ->or(Constraint::build($constraint));
     }
 
     /**
@@ -85,21 +101,23 @@ final class AssociativeArray implements Constraint\Implementation, Constraint\Pr
      *
      * @param callable(Map<K, V>): T $map
      *
-     * @return Constraint\Implementation<mixed, T>
+     * @return Constraint<mixed, T>
      */
-    #[\Override]
-    public function map(callable $map): Constraint\Implementation
+    public function map(callable $map): Constraint
     {
-        return namespace\Map::of($this, $map);
+        return $this
+            ->toConstraint()
+            ->map($map);
     }
 
     /**
      * @return Predicate<Map<K, V>>
      */
-    #[\Override]
     public function asPredicate(): Predicate
     {
-        return namespace\Predicate::of($this);
+        return $this
+            ->toConstraint()
+            ->asPredicate();
     }
 
     /**
