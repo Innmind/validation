@@ -71,7 +71,7 @@ final class Constraint
      */
     public function and(self $constraint): self
     {
-        return new self(AndConstraint::of(
+        return new self(Constraint\AndConstraint::of(
             $this->implementation,
             $constraint->implementation,
         ));
