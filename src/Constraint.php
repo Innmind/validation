@@ -198,21 +198,6 @@ final class Constraint
     }
 
     /**
-     * @psalm-pure
-     * @template A
-     * @template B
-     *
-     * @param Implementation<A, B> $implementation
-     *
-     * @return self<A, B>
-     */
-    public static function build(
-        Implementation $implementation,
-    ): self {
-        return new self($implementation);
-    }
-
-    /**
      * @template T
      *
      * @param self<O, T>|Provider<O, T> $constraint
@@ -288,6 +273,21 @@ final class Constraint
     public function asPredicate(): Predicate
     {
         return namespace\Predicate::of($this->implementation);
+    }
+
+    /**
+     * @psalm-pure
+     * @template A
+     * @template B
+     *
+     * @param Implementation<A, B> $implementation
+     *
+     * @return self<A, B>
+     */
+    private static function build(
+        Implementation $implementation,
+    ): self {
+        return new self($implementation);
     }
 
     /**
