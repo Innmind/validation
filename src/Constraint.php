@@ -10,6 +10,7 @@ use Innmind\Validation\{
 use Innmind\Immutable\{
     Validation,
     Predicate,
+    Map,
 };
 
 /**
@@ -132,6 +133,26 @@ final class Constraint
     public static function list(): self
     {
         return new self(Constraint\Primitive::list());
+    }
+
+    /**
+     * @psalm-pure
+     * @template K of array-key
+     * @template V
+     *
+     * @param self<mixed, K>|Provider<mixed, K> $key
+     * @param self<mixed, V>|Provider<mixed, V> $value
+     *
+     * @return self<mixed, Map<K, V>>
+     */
+    public static function associativeArray(
+        self|Provider $key,
+        self|Provider $value,
+    ): self {
+        return new self(Constraint\AssociativeArray::of(
+            self::collapse($key)->implementation,
+            self::collapse($value)->implementation,
+        ));
     }
 
     /**

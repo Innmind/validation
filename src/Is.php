@@ -10,6 +10,7 @@ use Innmind\Validation\Constraint\{
 use Innmind\Immutable\{
     Validation,
     Maybe,
+    Map,
 };
 
 /**
@@ -112,18 +113,18 @@ final class Is
 
     /**
      * @psalm-pure
-     * @template K
+     * @template K of array-key
      * @template V
      *
-     * @param Implementation<mixed, K>|Provider<mixed, K>|Constraint<mixed, K> $key
-     * @param Implementation<mixed, V>|Provider<mixed, V>|Constraint<mixed, V> $value
+     * @param Provider<mixed, K>|Constraint<mixed, K> $key
+     * @param Provider<mixed, V>|Constraint<mixed, V> $value
      *
-     * @return AssociativeArray<K, V>
+     * @return Constraint<mixed, Map<K, V>>
      */
     public static function associativeArray(
-        Implementation|Provider|Constraint $key,
-        Implementation|Provider|Constraint $value,
-    ): AssociativeArray {
+        Provider|Constraint $key,
+        Provider|Constraint $value,
+    ): Constraint {
         return AssociativeArray::of($key, $value);
     }
 
