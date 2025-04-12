@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\{
-    Implementation,
-    Provider,
-};
+use Innmind\Validation\Constraint\Provider;
 use Innmind\Immutable\{
     Validation,
     Predicate,
@@ -18,7 +15,7 @@ use Innmind\Immutable\{
  */
 final class Shape implements Provider
 {
-    /** @var non-empty-array<non-empty-string, Implementation<mixed, mixed>|Constraint<mixed, mixed>> */
+    /** @var non-empty-array<non-empty-string, Constraint<mixed, mixed>> */
     private array $constraints;
     /** @var list<non-empty-string> */
     private array $optional;
@@ -30,7 +27,7 @@ final class Shape implements Provider
     private $message;
 
     /**
-     * @param non-empty-array<non-empty-string, Implementation<mixed, mixed>|Constraint<mixed, mixed>> $constraints
+     * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints
      * @param list<non-empty-string> $optional
      * @param array<non-empty-string, mixed> $defaults
      * @param array<non-empty-string, non-empty-string> $rename
@@ -72,7 +69,7 @@ final class Shape implements Provider
      *
      * @param non-empty-string $key
      */
-    public static function of(string $key, Implementation|Provider|Constraint $constraint): self
+    public static function of(string $key, Provider|Constraint $constraint): self
     {
         if ($constraint instanceof Provider) {
             $constraint = $constraint->toConstraint();
@@ -90,7 +87,7 @@ final class Shape implements Provider
     /**
      * @param non-empty-string $key
      */
-    public function with(string $key, Implementation|Provider|Constraint $constraint): self
+    public function with(string $key, Provider|Constraint $constraint): self
     {
         if ($constraint instanceof Provider) {
             $constraint = $constraint->toConstraint();
@@ -111,7 +108,7 @@ final class Shape implements Provider
     /**
      * @param non-empty-string $key
      */
-    public function optional(string $key, Implementation|Provider|Constraint|null $constraint = null): self
+    public function optional(string $key, Provider|Constraint|null $constraint = null): self
     {
         $optional = $this->optional;
         $optional[] = $key;

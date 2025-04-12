@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\{
-    Implementation,
-    Provider,
-};
+use Innmind\Validation\Constraint\Provider;
 use Innmind\Immutable\{
     Validation,
     Maybe,
@@ -106,7 +103,7 @@ final class Is
      *
      * @param non-empty-string $key
      */
-    public static function shape(string $key, Implementation|Provider|Constraint $constraint): Shape
+    public static function shape(string $key, Provider|Constraint $constraint): Shape
     {
         return Shape::of($key, $constraint);
     }
