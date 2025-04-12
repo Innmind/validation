@@ -7,6 +7,13 @@
     $validate = Is::string();
     ```
 
+=== "`non-empty-string`"
+    ```php
+    use Innmind\Validation\Is;
+
+    $validate = Is::string()->nonEmpty();
+    ```
+
 === "`int`"
     ```php
     use Innmind\Validation\Is;

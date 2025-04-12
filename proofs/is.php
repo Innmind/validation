@@ -55,6 +55,68 @@ return static function() {
     );
 
     yield proof(
+        'Is::string()->nonEmpty()',
+        given(
+            Set::strings()->atLeast(1),
+            Set::either(
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
+                    true,
+                    false,
+                    null,
+                    new stdClass,
+                ),
+                Set::sequence(Set::strings()),
+            ),
+        ),
+        static function($assert, $string, $other) {
+            $constraint = Is::string()->nonEmpty();
+
+            $assert->true(
+                $constraint->asPredicate()($string),
+            );
+            $assert->same(
+                $string,
+                $constraint($string)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type string']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()(''),
+            );
+            $assert->same(
+                [['$', 'String cannot be empty']],
+                $constraint('')->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::string()->withFailure()',
         given(
             Set::strings()->atLeast(1),

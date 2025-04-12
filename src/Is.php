@@ -21,10 +21,8 @@ final class Is
 
     /**
      * @psalm-pure
-     *
-     * @return Constraint<mixed, string>
      */
-    public static function string(): Constraint
+    public static function string(): Provider\Str
     {
         return Constraint::string();
     }

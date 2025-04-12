@@ -6,6 +6,7 @@
 
 - `Innmind\Validation\Constraint::object()`
 - `Innmind\Validation\Constraint::failWith()`
+- `Innmind\Validation\Constraint::string()->nonEmpty()`
 - `Innmind\Validation\Constraint\Provider`
 
 ### Changed
