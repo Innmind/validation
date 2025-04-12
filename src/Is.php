@@ -29,10 +29,8 @@ final class Is
 
     /**
      * @psalm-pure
-     *
-     * @return Constraint<mixed, int>
      */
-    public static function int(): Constraint
+    public static function int(): Provider\Integer
     {
         return Constraint::int();
     }

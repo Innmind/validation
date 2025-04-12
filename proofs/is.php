@@ -194,6 +194,135 @@ return static function() {
     );
 
     yield proof(
+        'Is::int()->positive()',
+        given(
+            Set::integers()->above(1),
+            Set::integers()->below(0),
+        ),
+        static function($assert, $int, $other) {
+            $constraint = Is::int()->positive();
+
+            $assert->true(
+                $constraint->asPredicate()($int),
+            );
+            $assert->same(
+                $int,
+                $constraint($int)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Integer must be above 0']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::int()->negative()',
+        given(
+            Set::integers()->below(-1),
+            Set::integers()->above(0),
+        ),
+        static function($assert, $int, $other) {
+            $constraint = Is::int()->negative();
+
+            $assert->true(
+                $constraint->asPredicate()($int),
+            );
+            $assert->same(
+                $int,
+                $constraint($int)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Integer must be below 0']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::int()->range()',
+        given(
+            Set::compose(
+                static fn($min, $max) => [$min, $max],
+                Set::integers(),
+                Set::integers(),
+            )
+                ->filter(static fn($bounds) => $bounds[0] < $bounds[1])
+                ->flatMap(
+                    static fn($bounds) => Set::compose(
+                        static fn($valid, $invalid) => [
+                            $bounds->unwrap()[0],
+                            $bounds->unwrap()[1],
+                            $valid,
+                            $invalid,
+                        ],
+                        Set::integers()->between(
+                            $bounds->unwrap()[0],
+                            $bounds->unwrap()[1],
+                        ),
+                        Set::either(
+                            Set::integers()->below($bounds->unwrap()[0] - 1),
+                            Set::integers()->above($bounds->unwrap()[1] + 1),
+                        ),
+                    ),
+                ),
+        ),
+        static function($assert, $in) {
+            [$min, $max, $valid, $invalid] = $in;
+
+            $constraint = Is::int()->range($min, $max);
+
+            $assert->true(
+                $constraint->asPredicate()($valid),
+            );
+            $assert->same(
+                $valid,
+                $constraint($valid)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($invalid),
+            );
+            $assert->false(
+                $constraint($invalid)->match(
+                    static fn() => true,
+                    static fn() => false,
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::float()',
         given(
             Set::realNumbers()->map(static fn($value) => $value * 1.1), // force being floats

@@ -21,6 +21,30 @@
     $validate = Is::int();
     ```
 
+=== "`int<1, max>`"
+    ```php
+    use Innmind\Validation\Is;
+
+    $validate = Is::int()->positive();
+    ```
+
+=== "`int<min, -1>`"
+    ```php
+    use Innmind\Validation\Is;
+
+    $validate = Is::int()->negative();
+    ```
+
+=== "`int` range"
+    ```php
+    use Innmind\Validation\Is;
+
+    $min = 0;
+    $max = 100;
+
+    $validate = Is::int()->range($min, $max);
+    ```
+
 === "`float`"
     ```php
     use Innmind\Validation\Is;

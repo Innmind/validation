@@ -70,12 +70,10 @@ final class Constraint
 
     /**
      * @psalm-pure
-     *
-     * @return self<mixed, int>
      */
-    public static function int(): self
+    public static function int(): Provider\Integer
     {
-        return new self(Constraint\Primitive::int());
+        return Provider\Integer::of(self::build(...));
     }
 
     /**
