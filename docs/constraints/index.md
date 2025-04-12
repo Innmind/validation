@@ -7,6 +7,7 @@ Each `Constraint` have the following methods:
 - `->or()`
 - `->map()`
 - `->asPredicate()`
+- `->failWith()`
 
 ## `->__invoke()`
 
@@ -119,6 +120,18 @@ Sequence::of(1, 'a', null, 'b', new \stdClass, 'c')
 
 ??? note
     There's no need to apply transformations on your constraints when used as predicates as the outputed value is not used.
+
+## `->failWith()`
+
+This method allows to change the failure message.
+
+```php
+use Innmind\Validation\Is;
+
+$password = Is::string()->failWith('The password is required');
+
+$password($someInput);
+```
 
 ## Handling failures
 
