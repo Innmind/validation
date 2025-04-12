@@ -95,6 +95,10 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Innmind/immutable
+      link: https://github.com/Innmind/validation
     - icon: fontawesome/brands/x-twitter
       link: https://twitter.com/Baptouuuu
+    - icon: fontawesome/brands/mastodon
+      link: https://phpc.social/@baptouuuu
+    - icon: fontawesome/brands/bluesky
+      link: https://bsky.app/profile/baptouuuu.bsky.social

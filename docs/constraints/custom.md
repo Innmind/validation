@@ -1,15 +1,15 @@
 # Custom
 
-At some point you'll want to use your own constraints for a custom business logic. Instead of implementing the whole `Constraint` interface you can do:
+At some point you'll want to use your own constraints for a custom business logic. You can do:
 
 ```php
 use Innmind\Validation\{
-    Of,
+    Constraint,
     Failure,
 };
 use Innmind\Immutable\Validation;
 
-$validate = Of::callable(static function(mixed $input) {
+$validate = Constraint::of(static function(mixed $input) {
     if (/* your validation here */) {
         return Validation::success($input);
     }
@@ -24,12 +24,12 @@ For example if you know the input has to be a `string` you can do:
 
 ```php hl_lines="7"
 use Innmind\Validation\{
-    Of,
+    Constraint,
     Failure,
 };
 use Innmind\Immutable\Validation;
 
-$validate = Is::string()->and(Of::callable(static function(string $input) {
+$validate = Is::string()->and(Constraint::of(static function(string $input) {
     if (/* your validation here */) {
         return Validation::success($input);
     }

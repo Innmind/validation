@@ -12,17 +12,17 @@ return static function() {
     yield proof(
         'Is::string()',
         given(
-            Set\Strings::any(),
-            Set\Either::any(
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::strings(),
+            Set::either(
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     null,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Strings::any()),
+                Set::sequence(Set::strings()),
             ),
         ),
         static function($assert, $string, $other) {
@@ -55,19 +55,81 @@ return static function() {
     );
 
     yield proof(
-        'Is::string()->withFailure()',
+        'Is::string()->nonEmpty()',
         given(
-            Set\Strings::atLeast(1),
-            Set\Either::any(
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::strings()->atLeast(1),
+            Set::either(
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     null,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Strings::any()),
+                Set::sequence(Set::strings()),
+            ),
+        ),
+        static function($assert, $string, $other) {
+            $constraint = Is::string()->nonEmpty();
+
+            $assert->true(
+                $constraint->asPredicate()($string),
+            );
+            $assert->same(
+                $string,
+                $constraint($string)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Value is not of type string']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()(''),
+            );
+            $assert->same(
+                [['$', 'String cannot be empty']],
+                $constraint('')->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::string()->withFailure()',
+        given(
+            Set::strings()->atLeast(1),
+            Set::either(
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
+                    true,
+                    false,
+                    null,
+                    new stdClass,
+                ),
+                Set::sequence(Set::strings()),
             ),
         ),
         static function($assert, $message, $other) {
@@ -89,17 +151,17 @@ return static function() {
     yield proof(
         'Is::int()',
         given(
-            Set\Integers::any(),
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\RealNumbers::any()->map(static fn($value) => $value * 1.1), // force being floats
-                Set\Elements::of(
+            Set::integers(),
+            Set::either(
+                Set::strings(),
+                Set::realNumbers()->map(static fn($value) => $value * 1.1), // force being floats
+                Set::of(
                     true,
                     false,
                     null,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Strings::any()),
+                Set::sequence(Set::strings()),
             ),
         ),
         static function($assert, $int, $other) {
@@ -132,19 +194,148 @@ return static function() {
     );
 
     yield proof(
+        'Is::int()->positive()',
+        given(
+            Set::integers()->above(1),
+            Set::integers()->below(0),
+        ),
+        static function($assert, $int, $other) {
+            $constraint = Is::int()->positive();
+
+            $assert->true(
+                $constraint->asPredicate()($int),
+            );
+            $assert->same(
+                $int,
+                $constraint($int)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Integer must be above 0']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::int()->negative()',
+        given(
+            Set::integers()->below(-1),
+            Set::integers()->above(0),
+        ),
+        static function($assert, $int, $other) {
+            $constraint = Is::int()->negative();
+
+            $assert->true(
+                $constraint->asPredicate()($int),
+            );
+            $assert->same(
+                $int,
+                $constraint($int)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($other),
+            );
+            $assert->same(
+                [['$', 'Integer must be below 0']],
+                $constraint($other)->match(
+                    static fn() => null,
+                    static fn($failures) => $failures
+                        ->map(static fn($failure) => [
+                            $failure->path()->toString(),
+                            $failure->message(),
+                        ])
+                        ->toList(),
+                ),
+            );
+        },
+    );
+
+    yield proof(
+        'Is::int()->range()',
+        given(
+            Set::compose(
+                static fn($min, $max) => [$min, $max],
+                Set::integers(),
+                Set::integers(),
+            )
+                ->filter(static fn($bounds) => $bounds[0] < $bounds[1])
+                ->flatMap(
+                    static fn($bounds) => Set::compose(
+                        static fn($valid, $invalid) => [
+                            $bounds->unwrap()[0],
+                            $bounds->unwrap()[1],
+                            $valid,
+                            $invalid,
+                        ],
+                        Set::integers()->between(
+                            $bounds->unwrap()[0],
+                            $bounds->unwrap()[1],
+                        ),
+                        Set::either(
+                            Set::integers()->below($bounds->unwrap()[0] - 1),
+                            Set::integers()->above($bounds->unwrap()[1] + 1),
+                        ),
+                    ),
+                ),
+        ),
+        static function($assert, $in) {
+            [$min, $max, $valid, $invalid] = $in;
+
+            $constraint = Is::int()->range($min, $max);
+
+            $assert->true(
+                $constraint->asPredicate()($valid),
+            );
+            $assert->same(
+                $valid,
+                $constraint($valid)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert->false(
+                $constraint->asPredicate()($invalid),
+            );
+            $assert->false(
+                $constraint($invalid)->match(
+                    static fn() => true,
+                    static fn() => false,
+                ),
+            );
+        },
+    );
+
+    yield proof(
         'Is::float()',
         given(
-            Set\RealNumbers::any()->map(static fn($value) => $value * 1.1), // force being floats
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\Elements::of(
+            Set::realNumbers()->map(static fn($value) => $value * 1.1), // force being floats
+            Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::of(
                     true,
                     false,
                     null,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Strings::any()),
+                Set::sequence(Set::strings()),
             ),
         ),
         static function($assert, $float, $other) {
@@ -179,35 +370,35 @@ return static function() {
     yield proof(
         'Is::array()',
         given(
-            Set\Either::any(
-                Set\Sequence::of(Set\Either::any(
-                    Set\Strings::any(),
-                    Set\Integers::any(),
-                    Set\RealNumbers::any(),
-                    Set\Elements::of(
+            Set::either(
+                Set::sequence(Set::either(
+                    Set::strings(),
+                    Set::integers(),
+                    Set::realNumbers(),
+                    Set::of(
                         true,
                         false,
                         null,
                         new stdClass,
                     ),
                 )),
-                Set\Composite::immutable(
+                Set::compose(
                     static fn($keys, $values) => \array_combine(
                         \array_slice($keys, 0, \min(\count($keys), \count($values))),
                         \array_slice($values, 0, \min(\count($keys), \count($values))),
                     ),
-                    Set\Sequence::of(Set\Either::any(
-                        Set\Integers::any(),
-                        Set\Strings::any(),
+                    Set::sequence(Set::either(
+                        Set::integers(),
+                        Set::strings(),
                     )),
-                    Set\Sequence::of(Set\Type::any()),
+                    Set::sequence(Set::type()),
                 ),
             ),
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     null,
@@ -247,20 +438,20 @@ return static function() {
     yield proof(
         'Is::bool()',
         given(
-            Set\Elements::of(true, false),
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::of(true, false),
+            Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     null,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Either::any(
-                    Set\Strings::any(),
-                    Set\Integers::any(),
-                    Set\RealNumbers::any(),
-                    Set\Elements::of(
+                Set::sequence(Set::either(
+                    Set::strings(),
+                    Set::integers(),
+                    Set::realNumbers(),
+                    Set::of(
                         true,
                         false,
                         null,
@@ -301,20 +492,20 @@ return static function() {
     yield proof(
         'Is::null()',
         given(
-            Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     new stdClass,
                 ),
-                Set\Sequence::of(Set\Either::any(
-                    Set\Strings::any(),
-                    Set\Integers::any(),
-                    Set\RealNumbers::any(),
-                    Set\Elements::of(
+                Set::sequence(Set::either(
+                    Set::strings(),
+                    Set::integers(),
+                    Set::realNumbers(),
+                    Set::of(
                         true,
                         false,
                         null,
@@ -354,27 +545,27 @@ return static function() {
     yield proof(
         'Is::list()',
         given(
-            Set\Sequence::of(Set\Either::any(
-                Set\Strings::any(),
-                Set\Integers::any(),
-                Set\RealNumbers::any(),
-                Set\Elements::of(
+            Set::sequence(Set::either(
+                Set::strings(),
+                Set::integers(),
+                Set::realNumbers(),
+                Set::of(
                     true,
                     false,
                     null,
                     new stdClass,
                 ),
             )),
-            Set\Composite::immutable(
+            Set::compose(
                 static fn($keys, $values) => \array_combine(
                     \array_slice($keys, 0, \min(\count($keys), \count($values))),
                     \array_slice($values, 0, \min(\count($keys), \count($values))),
                 ),
-                Set\Sequence::of(Set\Either::any(
-                    Set\Integers::any(),
-                    Set\Strings::any(),
+                Set::sequence(Set::either(
+                    Set::integers(),
+                    Set::strings(),
                 ))->atLeast(1),
-                Set\Sequence::of(Set\Type::any())->atLeast(1),
+                Set::sequence(Set::type())->atLeast(1),
             ),
         ),
         static function($assert, $array, $other) {
@@ -409,11 +600,11 @@ return static function() {
     yield proof(
         'Is::list() with inner type',
         given(
-            Set\Sequence::of(
-                Set\Strings::any(),
+            Set::sequence(
+                Set::strings(),
             )->atLeast(1),
-            Set\Sequence::of(
-                Set\Integers::any(),
+            Set::sequence(
+                Set::integers(),
             )->atLeast(1),
         ),
         static function($assert, $strings, $ints) {
@@ -448,16 +639,16 @@ return static function() {
     yield proof(
         'Is::shape()',
         given(
-            Set\Composite::immutable(
+            Set::compose(
                 static fn($letter, $rest) => $letter.$rest,
-                Set\Either::any(
-                    Set\Chars::lowercaseLetter(),
-                    Set\Chars::uppercaseLetter(),
+                Set::either(
+                    Set::strings()->chars()->lowercaseLetter(),
+                    Set::strings()->chars()->uppercaseLetter(),
                 ),
-                Set\Strings::madeOf(Set\Chars::alphanumerical()),
+                Set::strings()->madeOf(Set::strings()->chars()->alphanumerical()),
             ),
-            Set\Type::any(),
-            Set\Integers::any(),
+            Set::type(),
+            Set::integers(),
         ),
         static function($assert, $key, $value, $int) {
             $assert->null(
@@ -479,15 +670,15 @@ return static function() {
     yield proof(
         'Is::shape()->withKeyFailure()',
         given(
-            Set\Composite::immutable(
+            Set::compose(
                 static fn($letter, $rest) => $letter.$rest,
-                Set\Either::any(
-                    Set\Chars::lowercaseLetter(),
-                    Set\Chars::uppercaseLetter(),
+                Set::either(
+                    Set::strings()->chars()->lowercaseLetter(),
+                    Set::strings()->chars()->uppercaseLetter(),
                 ),
-                Set\Strings::madeOf(Set\Chars::alphanumerical()),
+                Set::strings()->madeOf(Set::strings()->chars()->alphanumerical()),
             ),
-            Set\Strings::atLeast(1),
+            Set::strings()->atLeast(1),
         ),
         static function($assert, $key, $expected) {
             $assert->same(
@@ -512,19 +703,19 @@ return static function() {
     yield proof(
         'Is::associativeArray()',
         given(
-            Set\Sequence::of(Set\Strings::any()->filter(
+            Set::sequence(Set::strings()->filter(
                 static fn($string) => !\is_numeric($string), // to avoid implicit convertions to ints
             ))->map(static fn($keys) => \array_unique($keys)),
-            Set\Sequence::of(Set\Integers::any()),
-            Set\Integers::any(),
-            Set\Strings::atLeast(1)->filter(
+            Set::sequence(Set::integers()),
+            Set::integers(),
+            Set::strings()->atLeast(1)->filter(
                 static fn($string) => !\is_numeric($string), // to avoid implicit convertions to ints
             ),
-            Set\Either::any(
-                Set\Integers::any(),
-                Set\Strings::any(),
-                Set\Elements::of(true, false, null, new stdClass),
-                Set\RealNumbers::any(),
+            Set::either(
+                Set::integers(),
+                Set::strings(),
+                Set::of(true, false, null, new stdClass),
+                Set::realNumbers(),
             ),
         ),
         static function($assert, $keys, $values, $integer, $string, $random) {
@@ -621,7 +812,7 @@ return static function() {
 
     yield proof(
         'Is::just()',
-        given(Set\Integers::any()),
+        given(Set::integers()),
         static function($assert, $value) {
             $assert->same(
                 $value,
@@ -647,9 +838,9 @@ return static function() {
     yield proof(
         'Is::value()',
         given(
-            Set\Type::any(),
-            Set\Type::any(),
-            Set\Strings::any(),
+            Set::type(),
+            Set::type(),
+            Set::strings(),
         )->filter(static fn($a, $b) => $a !== $b),
         static function($assert, $a, $b, $message) {
             $assert->same(

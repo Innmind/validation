@@ -3,33 +3,15 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Immutable\{
-    Validation,
-    Predicate as PredicateInterface,
-};
+use Innmind\Immutable\Validation;
 
 /**
- * @template-covariant A
- * @template-covariant B
- * @implements Constraint<A, B>
  * @psalm-immutable
  */
-final class Of implements Constraint
+final class Of
 {
-    /** @var pure-callable(A): Validation<Failure, B> */
-    private $assert;
-
-    /**
-     * @param pure-callable(A): Validation<Failure, B> $assert
-     */
-    private function __construct(callable $assert)
+    private function __construct()
     {
-        $this->assert = $assert;
-    }
-
-    public function __invoke(mixed $value): Validation
-    {
-        return ($this->assert)($value);
     }
 
     /**
@@ -39,54 +21,10 @@ final class Of implements Constraint
      *
      * @param pure-callable(T): Validation<Failure, U> $assert
      *
-     * @return self<T, U>
+     * @return Constraint<T, U>
      */
-    public static function callable(callable $assert): self
+    public static function callable(callable $assert): Constraint
     {
-        return new self($assert);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Constraint<B, T> $constraint
-     *
-     * @return Constraint<A, T>
-     */
-    public function and(Constraint $constraint): Constraint
-    {
-        return AndConstraint::of($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Constraint<A, T> $constraint
-     *
-     * @return Constraint<A, B|T>
-     */
-    public function or(Constraint $constraint): Constraint
-    {
-        return OrConstraint::of($this, $constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param callable(B): T $map
-     *
-     * @return Constraint<A, T>
-     */
-    public function map(callable $map): Constraint
-    {
-        return Map::of($this, $map);
-    }
-
-    /**
-     * @return PredicateInterface<B>
-     */
-    public function asPredicate(): PredicateInterface
-    {
-        return Predicate::of($this);
+        return Constraint::of($assert);
     }
 }

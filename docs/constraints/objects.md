@@ -1,6 +1,14 @@
 # Objects
 
-You can check the input is an object of a given instance like this:
+You can check the input is an object like this:
+
+```php
+use Innmind\Validation\Constraint;
+
+$validate = Constraint::object();
+```
+
+And if you want to make sure it is an instance of some class:
 
 ```php
 use Innmind\Validation\Instance;
