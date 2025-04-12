@@ -7,6 +7,11 @@ use Innmind\Validation\{
     Constraint\Implementation,
     Constraint\Provider,
 };
+use Innmind\TimeContinuum\{
+    Clock,
+    Format,
+    PointInTime as PointInTimeInterface,
+};
 use Innmind\Immutable\{
     Validation,
     Predicate,
@@ -180,6 +185,16 @@ final class Constraint
     public static function hasKey(string $key): self
     {
         return new self(Constraint\Has::key($key));
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<string, PointInTimeInterface>
+     */
+    public static function pointInTime(Clock $clock, Format $format): self
+    {
+        return new self(Constraint\PointInTime::ofFormat($clock, $format));
     }
 
     /**
