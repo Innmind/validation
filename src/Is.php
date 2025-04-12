@@ -10,121 +10,75 @@ use Innmind\Validation\Constraint\{
 use Innmind\Immutable\{
     Validation,
     Maybe,
-    Predicate,
 };
 
 /**
- * @template-covariant T
- * @template-covariant U
- * @implements Provider<T, U>
  * @psalm-immutable
  */
-final class Is implements Provider
+final class Is
 {
-    /** @var pure-callable(T): bool */
-    private $assert;
-    /** @var non-empty-string */
-    private string $type;
-
-    /**
-     * @param pure-callable(T): bool $assert
-     * @param non-empty-string $type
-     */
-    private function __construct(
-        callable $assert,
-        string $type,
-    ) {
-        $this->assert = $assert;
-        $this->type = $type;
-    }
-
-    /**
-     * @param T $value
-     *
-     * @return Validation<Failure, U>
-     */
-    public function __invoke(mixed $value): Validation
+    private function __construct()
     {
-        /** @var Validation<Failure, U> */
-        return match (($this->assert)($value)) {
-            true => Validation::success($value),
-            false => Validation::fail(Failure::of(
-                "Value is not of type {$this->type}",
-            )),
-        };
-    }
-
-    #[\Override]
-    public function toConstraint(): Constraint
-    {
-        /** @psalm-suppress InvalidArgument */
-        return Constraint::of($this(...));
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, string>
+     * @return Constraint<mixed, string>
      */
-    public static function string(): self
+    public static function string(): Constraint
     {
-        /** @var self<mixed, string> */
-        return new self(\is_string(...), 'string');
+        return Constraint::string();
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, int>
+     * @return Constraint<mixed, int>
      */
-    public static function int(): self
+    public static function int(): Constraint
     {
-        /** @var self<mixed, int> */
-        return new self(\is_int(...), 'int');
+        return Constraint::int();
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, float>
+     * @return Constraint<mixed, float>
      */
-    public static function float(): self
+    public static function float(): Constraint
     {
-        /** @var self<mixed, float> */
-        return new self(\is_float(...), 'float');
+        return Constraint::float();
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, array>
+     * @return Constraint<mixed, array>
      */
-    public static function array(): self
+    public static function array(): Constraint
     {
-        /** @var self<mixed, array> */
-        return new self(\is_array(...), 'array');
+        return Constraint::array();
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, bool>
+     * @return Constraint<mixed, bool>
      */
-    public static function bool(): self
+    public static function bool(): Constraint
     {
-        /** @var self<mixed, bool> */
-        return new self(\is_bool(...), 'bool');
+        return Constraint::bool();
     }
 
     /**
      * @psalm-pure
      *
-     * @return self<mixed, null>
+     * @return Constraint<mixed, null>
      */
-    public static function null(): self
+    public static function null(): Constraint
     {
-        /** @var self<mixed, null> */
-        return new self(\is_null(...), 'null');
+        return Constraint::null();
     }
 
     /**
@@ -138,10 +92,7 @@ final class Is implements Provider
      */
     public static function list(Implementation|Provider|Constraint|null $each = null): Constraint
     {
-        /** @var self<array, list<mixed>> */
-        $list = new self(\array_is_list(...), 'list');
-
-        $constraint = self::array()->and($list);
+        $constraint = Constraint::list();
 
         return match ($each) {
             null => $constraint,
@@ -215,69 +166,5 @@ final class Is implements Provider
                 ),
             )),
         });
-    }
-
-    /**
-     * @param non-empty-string $message
-     *
-     * @return Constraint<T, U>
-     */
-    public function withFailure(string $message): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->failWith($message);
-    }
-
-    /**
-     * @template V
-     *
-     * @param Provider<U, V>|Constraint<U, V> $constraint
-     *
-     * @return Constraint<T, V>
-     */
-    public function and(Provider|Constraint $constraint): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->and($constraint);
-    }
-
-    /**
-     * @template V
-     *
-     * @param Provider<T, V>|Constraint<T, V> $constraint
-     *
-     * @return Constraint<T, U|V>
-     */
-    public function or(Provider|Constraint $constraint): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->or($constraint);
-    }
-
-    /**
-     * @template V
-     *
-     * @param callable(U): V $map
-     *
-     * @return Constraint<T, V>
-     */
-    public function map(callable $map): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->map($map);
-    }
-
-    /**
-     * @return Predicate<U>
-     */
-    public function asPredicate(): Predicate
-    {
-        return $this
-            ->toConstraint()
-            ->asPredicate();
     }
 }

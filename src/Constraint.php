@@ -66,6 +66,76 @@ final class Constraint
 
     /**
      * @psalm-pure
+     *
+     * @return self<mixed, string>
+     */
+    public static function string(): self
+    {
+        return new self(Constraint\Primitive::string());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, int>
+     */
+    public static function int(): self
+    {
+        return new self(Constraint\Primitive::int());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, float>
+     */
+    public static function float(): self
+    {
+        return new self(Constraint\Primitive::float());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, array>
+     */
+    public static function array(): self
+    {
+        return new self(Constraint\Primitive::array());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, bool>
+     */
+    public static function bool(): self
+    {
+        return new self(Constraint\Primitive::bool());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, null>
+     */
+    public static function null(): self
+    {
+        return new self(Constraint\Primitive::null());
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @return self<mixed, list<mixed>>
+     */
+    public static function list(): self
+    {
+        return new self(Constraint\Primitive::list());
+    }
+
+    /**
+     * @psalm-pure
      * @template A
      * @template B
      *
@@ -135,6 +205,18 @@ final class Constraint
             $this->implementation,
             $message,
         ));
+    }
+
+    /**
+     * @deprecated Use self::failWith(), this method exist for backaward compatibility
+     *
+     * @param non-empty-string $message
+     *
+     * @return self<I, O>
+     */
+    public function withFailure(string $message): self
+    {
+        return $this->failWith($message);
     }
 
     /**
