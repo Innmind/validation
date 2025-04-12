@@ -87,6 +87,18 @@ trait Like
     }
 
     /**
+     * @deprecated Use self::failWith(), this method exist for backaward compatibility
+     *
+     * @param non-empty-string $message
+     *
+     * @return Constraint<I, O>
+     */
+    public function withFailure(string $message): Constraint
+    {
+        return $this->failWith($message);
+    }
+
+    /**
      * @return Predicate<O>
      */
     public function asPredicate(): Predicate

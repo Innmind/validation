@@ -6,6 +6,10 @@
 
 - `Innmind\Validation\Constraint::object()`
 - `Innmind\Validation\Constraint::failWith()`
+- `Innmind\Validation\Constraint::string()->nonEmpty()`
+- `Innmind\Validation\Constraint::int()->positive()`
+- `Innmind\Validation\Constraint::int()->negative()`
+- `Innmind\Validation\Constraint::int()->range()`
 - `Innmind\Validation\Constraint\Provider`
 
 ### Changed

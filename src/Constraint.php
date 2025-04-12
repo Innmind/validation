@@ -62,22 +62,18 @@ final class Constraint
 
     /**
      * @psalm-pure
-     *
-     * @return self<mixed, string>
      */
-    public static function string(): self
+    public static function string(): Provider\Str
     {
-        return new self(Constraint\Primitive::string());
+        return Provider\Str::of(self::build(...));
     }
 
     /**
      * @psalm-pure
-     *
-     * @return self<mixed, int>
      */
-    public static function int(): self
+    public static function int(): Provider\Integer
     {
-        return new self(Constraint\Primitive::int());
+        return Provider\Integer::of(self::build(...));
     }
 
     /**
