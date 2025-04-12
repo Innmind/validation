@@ -22,20 +22,13 @@ final class PointInTime implements Provider
 {
     private Clock $clock;
     private Format $format;
-    /** @var ?non-empty-string */
-    private ?string $message;
 
-    /**
-     * @param ?non-empty-string $message
-     */
     private function __construct(
         Clock $clock,
         Format $format,
-        ?string $message = null,
     ) {
         $this->clock = $clock;
         $this->format = $format;
-        $this->message = $message;
     }
 
     /**
@@ -47,14 +40,14 @@ final class PointInTime implements Provider
     {
         if ($value === '') {
             return Validation::fail(Failure::of(
-                $this->message ?? "Value is not a date of format {$this->format->toString()}",
+                "Value is not a date of format {$this->format->toString()}",
             ));
         }
 
         return $this->clock->at($value, $this->format)->match(
             static fn($point) => Validation::success($point),
             fn() => Validation::fail(Failure::of(
-                $this->message ?? "Value is not a date of format {$this->format->toString()}",
+                "Value is not a date of format {$this->format->toString()}",
             )),
         );
     }
@@ -76,10 +69,14 @@ final class PointInTime implements Provider
 
     /**
      * @param non-empty-string $message
+     *
+     * @return Constraint<string, PointInTimeInterface>
      */
-    public function withFailure(string $message): self
+    public function withFailure(string $message): Constraint
     {
-        return new self($this->clock, $this->format, $message);
+        return $this
+            ->toConstraint()
+            ->failWith($message);
     }
 
     /**

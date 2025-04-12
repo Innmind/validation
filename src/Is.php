@@ -25,22 +25,17 @@ final class Is implements Provider
     private $assert;
     /** @var non-empty-string */
     private string $type;
-    /** @var ?non-empty-string */
-    private ?string $message;
 
     /**
      * @param pure-callable(T): bool $assert
      * @param non-empty-string $type
-     * @param ?non-empty-string $message
      */
     private function __construct(
         callable $assert,
         string $type,
-        ?string $message = null,
     ) {
         $this->assert = $assert;
         $this->type = $type;
-        $this->message = $message;
     }
 
     /**
@@ -54,7 +49,7 @@ final class Is implements Provider
         return match (($this->assert)($value)) {
             true => Validation::success($value),
             false => Validation::fail(Failure::of(
-                $this->message ?? "Value is not of type {$this->type}",
+                "Value is not of type {$this->type}",
             )),
         };
     }
@@ -225,11 +220,13 @@ final class Is implements Provider
     /**
      * @param non-empty-string $message
      *
-     * @return self<T, U>
+     * @return Constraint<T, U>
      */
-    public function withFailure(string $message): self
+    public function withFailure(string $message): Constraint
     {
-        return new self($this->assert, $this->type, $message);
+        return $this
+            ->toConstraint()
+            ->failWith($message);
     }
 
     /**

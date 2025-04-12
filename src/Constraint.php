@@ -125,6 +125,19 @@ final class Constraint
     }
 
     /**
+     * @param non-empty-string $message
+     *
+     * @return self<I, O>
+     */
+    public function failWith(string $message): self
+    {
+        return new self(Constraint\FailWith::of(
+            $this->implementation,
+            $message,
+        ));
+    }
+
+    /**
      * @return Predicate<O>
      */
     public function asPredicate(): Predicate
