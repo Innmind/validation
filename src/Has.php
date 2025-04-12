@@ -15,41 +15,29 @@ use Innmind\Immutable\{
  */
 final class Has implements Provider
 {
-    /** @var non-empty-string */
-    private string $key;
-    /** @var callable(non-empty-string): non-empty-string */
-    private $message;
-
     /**
      * @param non-empty-string $key
-     * @param callable(non-empty-string): non-empty-string $message
      */
-    private function __construct(string $key, callable $message)
+    private function __construct(private string $key)
     {
-        $this->key = $key;
-        $this->message = $message;
     }
 
     /**
+     * @deprecated
+     *
      * @param array $value
+     *
      * @return Validation<Failure, mixed>
      */
     public function __invoke(mixed $value): Validation
     {
-        /** @psalm-suppress ImpureFunctionCall */
-        return match (\array_key_exists($this->key, $value)) {
-            true => Validation::success($value[$this->key]),
-            false => Validation::fail(Failure::of(
-                ($this->message)($this->key),
-            )),
-        };
+        return $this->toConstraint()($value);
     }
 
     #[\Override]
     public function toConstraint(): Constraint
     {
-        /** @psalm-suppress InvalidArgument */
-        return Constraint::of($this(...));
+        return Constraint::hasKey($this->key);
     }
 
     /**
@@ -61,18 +49,20 @@ final class Has implements Provider
      */
     public static function key(string $key): self
     {
-        return new self(
-            $key,
-            static fn($key) => "The key $key is missing",
-        );
+        return new self($key);
     }
 
     /**
      * @param callable(non-empty-string): non-empty-string $message The input is the key
+     *
+     * @return Constraint<array, mixed>
      */
-    public function withFailure(callable $message): self
+    public function withFailure(callable $message): Constraint
     {
-        return new self($this->key, $message);
+        /** @psalm-suppress ImpureFunctionCall */
+        return $this
+            ->toConstraint()
+            ->failWith($message($this->key));
     }
 
     /**

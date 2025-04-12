@@ -172,6 +172,18 @@ final class Constraint
 
     /**
      * @psalm-pure
+     *
+     * @param non-empty-string $key
+     *
+     * @return self<array, mixed>
+     */
+    public static function hasKey(string $key): self
+    {
+        return new self(Constraint\Has::key($key));
+    }
+
+    /**
+     * @psalm-pure
      * @template A
      * @template B
      *
