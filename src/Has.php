@@ -3,10 +3,9 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\Validation\Constraint\Provider;
-use Innmind\Immutable\{
-    Validation,
-    Predicate,
+use Innmind\Validation\Constraint\{
+    Provider,
+    Like,
 };
 
 /**
@@ -15,21 +14,14 @@ use Innmind\Immutable\{
  */
 final class Has implements Provider
 {
+    /** @use Like<mixed, mixed> */
+    use Like;
+
     /**
      * @param non-empty-string $key
      */
     private function __construct(private string $key)
     {
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return Validation<Failure, mixed>
-     */
-    public function __invoke(mixed $value): Validation
-    {
-        return $this->toConstraint()($value);
     }
 
     #[\Override]
@@ -61,57 +53,5 @@ final class Has implements Provider
         return $this
             ->toConstraint()
             ->failWith($message($this->key));
-    }
-
-    /**
-     * @template T
-     *
-     * @param Constraint<mixed, T> $constraint
-     *
-     * @return Constraint<mixed, T>
-     */
-    public function and(Constraint $constraint): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->and($constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param Constraint<mixed, T> $constraint
-     *
-     * @return Constraint<mixed, mixed|T>
-     */
-    public function or(Constraint $constraint): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->or($constraint);
-    }
-
-    /**
-     * @template T
-     *
-     * @param callable(mixed): T $map
-     *
-     * @return Constraint<mixed, T>
-     */
-    public function map(callable $map): Constraint
-    {
-        return $this
-            ->toConstraint()
-            ->map($map);
-    }
-
-    /**
-     * @return Predicate<mixed>
-     */
-    public function asPredicate(): Predicate
-    {
-        return $this
-            ->toConstraint()
-            ->asPredicate();
     }
 }
