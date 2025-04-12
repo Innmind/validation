@@ -39,13 +39,13 @@ Let's take the example of making sure a `string` is shorter than `255` character
 ```php hl_lines="3-4 6 9-14"
 use Innmind\Validation\{
     Is,
-    Of,
+    Constraint,
     Failure,
 };
 use Innmind\Immutable\Validation;
 
 function(mixed $input): string {
-    $validate = Is::string()->and(Of::callable(
+    $validate = Is::string()->and(Constraint::of(
         static fn(string $value) => match (true) {
             \strlen($value) < 255 => Validation::success($value),
             default => Validation::fail(Failure::of('String is too long')),

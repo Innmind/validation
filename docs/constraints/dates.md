@@ -3,14 +3,13 @@
 This will transform `string`s into `PointInTime`s from the [`innmind/time-continuum` package](https://github.com/Innmind/TimeContinuum/).
 
 ```php
-use Innmind\Validation\PointInTime;
+use Innmind\Validation\Constraint;
 use Innmind\TimeContinuum\{
     Clock,
     Format,
 };
 
-$validate = PointInTime::ofFormat(
-    Clock::live(),
+$validate = Constraint::pointInTime(Clock::live())->format(
     Format::iso8601(),
 );
 ```
