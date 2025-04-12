@@ -10,7 +10,7 @@ use Innmind\Immutable\{
 };
 
 /**
- * @implements Provider<array, mixed>
+ * @implements Provider<mixed, mixed>
  * @psalm-immutable
  */
 final class Has implements Provider
@@ -25,8 +25,6 @@ final class Has implements Provider
     /**
      * @deprecated
      *
-     * @param array $value
-     *
      * @return Validation<Failure, mixed>
      */
     public function __invoke(mixed $value): Validation
@@ -37,7 +35,7 @@ final class Has implements Provider
     #[\Override]
     public function toConstraint(): Constraint
     {
-        return Constraint::hasKey($this->key);
+        return Constraint::array()->hasKey($this->key);
     }
 
     /**
@@ -55,7 +53,7 @@ final class Has implements Provider
     /**
      * @param callable(non-empty-string): non-empty-string $message The input is the key
      *
-     * @return Constraint<array, mixed>
+     * @return Constraint<mixed, mixed>
      */
     public function withFailure(callable $message): Constraint
     {
@@ -70,7 +68,7 @@ final class Has implements Provider
      *
      * @param Constraint<mixed, T> $constraint
      *
-     * @return Constraint<array, T>
+     * @return Constraint<mixed, T>
      */
     public function and(Constraint $constraint): Constraint
     {
@@ -82,9 +80,9 @@ final class Has implements Provider
     /**
      * @template T
      *
-     * @param Constraint<array, T> $constraint
+     * @param Constraint<mixed, T> $constraint
      *
-     * @return Constraint<array, mixed|T>
+     * @return Constraint<mixed, mixed|T>
      */
     public function or(Constraint $constraint): Constraint
     {
@@ -98,7 +96,7 @@ final class Has implements Provider
      *
      * @param callable(mixed): T $map
      *
-     * @return Constraint<array, T>
+     * @return Constraint<mixed, T>
      */
     public function map(callable $map): Constraint
     {

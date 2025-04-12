@@ -118,14 +118,12 @@ final class Primitive implements Implementation
      * @internal
      * @psalm-pure
      *
-     * @return Implementation<mixed, list<mixed>>
+     * @return Implementation<array, list<mixed>>
      */
     public static function list(): Implementation
     {
         /** @var self<array, list<mixed>> */
-        $list = new self(\array_is_list(...), 'list');
-
-        return AndConstraint::of(self::array(), $list);
+        return new self(\array_is_list(...), 'list');
     }
 
     /**

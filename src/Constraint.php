@@ -15,7 +15,6 @@ use Innmind\TimeContinuum\{
 use Innmind\Immutable\{
     Validation,
     Predicate,
-    Map,
 };
 
 /**
@@ -97,12 +96,13 @@ final class Constraint
 
     /**
      * @psalm-pure
-     *
-     * @return self<mixed, array>
      */
-    public static function array(): self
+    public static function array(): Provider\Arr
     {
-        return new self(Constraint\Primitive::array());
+        return Provider\Arr::of(
+            self::build(...),
+            self::extract(...),
+        );
     }
 
     /**
@@ -123,63 +123,6 @@ final class Constraint
     public static function null(): self
     {
         return new self(Constraint\Primitive::null());
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @return self<mixed, list<mixed>>
-     */
-    public static function list(): self
-    {
-        return new self(Constraint\Primitive::list());
-    }
-
-    /**
-     * @psalm-pure
-     * @template K of array-key
-     * @template V
-     *
-     * @param self<mixed, K>|Provider<mixed, K> $key
-     * @param self<mixed, V>|Provider<mixed, V> $value
-     *
-     * @return self<mixed, Map<K, V>>
-     */
-    public static function associativeArray(
-        self|Provider $key,
-        self|Provider $value,
-    ): self {
-        return new self(Constraint\AssociativeArray::of(
-            self::collapse($key)->implementation,
-            self::collapse($value)->implementation,
-        ));
-    }
-
-    /**
-     * @psalm-pure
-     * @template A
-     *
-     * @param self<mixed, A>|Provider<mixed, A> $constraint
-     *
-     * @return self<list, list<A>>
-     */
-    public static function each(self|Provider $constraint): self
-    {
-        return new self(Constraint\Each::of(
-            self::collapse($constraint)->implementation,
-        ));
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @param non-empty-string $key
-     *
-     * @return self<array, mixed>
-     */
-    public static function hasKey(string $key): self
-    {
-        return new self(Constraint\Has::key($key));
     }
 
     /**
@@ -283,6 +226,20 @@ final class Constraint
         Implementation $implementation,
     ): self {
         return new self($implementation);
+    }
+
+    /**
+     * @psalm-pure
+     * @template A
+     * @template B
+     *
+     * @param self<A, B>|Provider<A, B> $constraint
+     *
+     * @return Implementation<A, B>
+     */
+    private static function extract(self|Provider $constraint): Implementation
+    {
+        return self::collapse($constraint)->implementation;
     }
 
     /**

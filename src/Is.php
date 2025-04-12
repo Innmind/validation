@@ -51,10 +51,8 @@ final class Is
 
     /**
      * @psalm-pure
-     *
-     * @return Constraint<mixed, array>
      */
-    public static function array(): Constraint
+    public static function array(): Provider\Arr
     {
         return Constraint::array();
     }
@@ -90,12 +88,7 @@ final class Is
      */
     public static function list(Provider|Constraint|null $each = null): Constraint
     {
-        $constraint = Constraint::list();
-
-        return match ($each) {
-            null => $constraint,
-            default => $constraint->and(Constraint::each($each)),
-        };
+        return Constraint::array()->list($each);
     }
 
     /**

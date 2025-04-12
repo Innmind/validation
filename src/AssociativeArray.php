@@ -27,6 +27,6 @@ final class AssociativeArray
      */
     public static function of(Provider|Constraint $key, Provider|Constraint $value): Constraint
     {
-        return Constraint::associativeArray($key, $value);
+        return Constraint::array()->associative($key, $value);
     }
 }
