@@ -1,5 +1,29 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Innmind\Validation\Constraint::object()`
+- `Innmind\Validation\Constraint::failWith()`
+- `Innmind\Validation\Constraint\Provider`
+
+### Changed
+
+- `Innmind\Validation\Constraint` is now a `final` class
+- `Innmind\Validation\Failure::of()` is now `internal`
+- `Innmind\Validation\Failure::under()` is now `internal`
+- `Innmind\Validation\KeyPath::root()` is now `internal`
+- `Innmind\Validation\KeyPath::under()` is now `internal`
+- `Innmind\Validation\Predicate` is now `internal`
+
+### Removed
+
+- `Innmind\Validation\Each`, you must use `Is::list()` instead
+- `Innmind\Validation\AndConstraint`, you must use `Constraint::and()` instead
+- `Innmind\Validation\OrConstraint`, you must use `Constraint::or()` instead
+- `Innmind\Validation\Map`, you must use `Constraint::map()` instead
+
 ## 1.9.0 - 2025-02-09
 
 ### Added
