@@ -37,6 +37,7 @@ final class AssociativeArray implements Implementation
     }
 
     /**
+     * @internal
      * @psalm-pure
      * @template A of array-key
      * @template B

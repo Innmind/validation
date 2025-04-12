@@ -22,6 +22,7 @@ final class Failure
     }
 
     /**
+     * @internal
      * @psalm-pure
      *
      * @param non-empty-string $message
@@ -32,6 +33,8 @@ final class Failure
     }
 
     /**
+     * @internal
+     *
      * @param non-empty-string $path
      */
     public function under(string $path): self

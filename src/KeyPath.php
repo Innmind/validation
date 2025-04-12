@@ -22,6 +22,7 @@ final class KeyPath
     }
 
     /**
+     * @internal
      * @psalm-pure
      */
     public static function root(): self
@@ -30,6 +31,7 @@ final class KeyPath
     }
 
     /**
+     * @internal
      * @param non-empty-string $path
      */
     public function under(string $path): self

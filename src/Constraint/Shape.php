@@ -11,6 +11,7 @@ use Innmind\Validation\{
 use Innmind\Immutable\Validation;
 
 /**
+ * @internal
  * @implements Implementation<mixed, non-empty-array<non-empty-string, mixed>>
  * @psalm-immutable
  */
@@ -42,6 +43,7 @@ final class Shape implements Implementation
     }
 
     /**
+     * @internal
      * @psalm-pure
      *
      * @param non-empty-array<non-empty-string, Constraint<mixed, mixed>> $constraints

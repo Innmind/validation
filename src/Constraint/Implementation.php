@@ -7,6 +7,7 @@ use Innmind\Validation\Failure;
 use Innmind\Immutable\Validation;
 
 /**
+ * @internal
  * @template-covariant I
  * @template-covariant O
  * @psalm-immutable
