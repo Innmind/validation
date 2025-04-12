@@ -43,9 +43,9 @@ return static function() {
 
     yield proof(
         'Constraint::object()',
-        given(Set\Either::any(
-            Set\Integers::any(),
-            Set\Strings::any(),
+        given(Set::either(
+            Set::integers(),
+            Set::strings(),
         )),
         static function($assert, $other) {
             $std = new stdClass;
