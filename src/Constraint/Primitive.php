@@ -127,4 +127,16 @@ final class Primitive implements Implementation
 
         return AndConstraint::of(self::array(), $list);
     }
+
+    /**
+     * @internal
+     * @psalm-pure
+     *
+     * @return self<mixed, object>
+     */
+    public static function object(): self
+    {
+        /** @var self<mixed, object> */
+        return new self(\is_object(...), 'object');
+    }
 }

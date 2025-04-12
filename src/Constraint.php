@@ -58,16 +58,11 @@ final class Constraint
     }
 
     /**
-     * @template A of object
      * @psalm-pure
-     *
-     * @param class-string<A> $class
-     *
-     * @return self<mixed, A>
      */
-    public static function instance(string $class): self
+    public static function object(): Provider\Objet
     {
-        return new self(Constraint\Instance::of($class));
+        return Provider\Objet::of(self::build(...));
     }
 
     /**

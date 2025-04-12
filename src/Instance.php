@@ -22,6 +22,6 @@ final class Instance
      */
     public static function of(string $class): Constraint
     {
-        return Constraint::instance($class);
+        return Constraint::object()->instance($class);
     }
 }
