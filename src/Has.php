@@ -43,6 +43,8 @@ final class Has implements Provider
     }
 
     /**
+     * @deprecated
+     *
      * @param callable(non-empty-string): non-empty-string $message The input is the key
      *
      * @return Constraint<mixed, mixed>

@@ -6,7 +6,6 @@ namespace Innmind\Validation\Constraint;
 use Innmind\Validation\{
     Constraint,
     Failure,
-    Has,
 };
 use Innmind\Immutable\Validation;
 
@@ -78,10 +77,13 @@ final class Shape implements Implementation
         $validation = Validation::success([]);
 
         foreach ($this->constraints as $key => $constraint) {
-            $keyValidation = Has::key($key);
+            $keyValidation = Constraint::array()->hasKey($key);
 
             if (!\is_null($this->message)) {
-                $keyValidation = $keyValidation->withFailure($this->message);
+                /** @psalm-suppress ImpureFunctionCall */
+                $keyValidation = $keyValidation->failWith(
+                    ($this->message)($key),
+                );
             }
 
             if (\in_array($key, $this->optional, true)) {
