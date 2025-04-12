@@ -15,15 +15,12 @@ use Innmind\Immutable\Validation;
  */
 final class Of implements Implementation
 {
-    /** @var pure-callable(A): Validation<Failure, B> */
-    private $assert;
-
     /**
-     * @param pure-callable(A): Validation<Failure, B> $assert
+     * @param pure-Closure(A): Validation<Failure, B> $assert
      */
-    private function __construct(callable $assert)
-    {
-        $this->assert = $assert;
+    private function __construct(
+        private \Closure $assert,
+    ) {
     }
 
     #[\Override]
@@ -44,6 +41,6 @@ final class Of implements Implementation
      */
     public static function callable(callable $assert): self
     {
-        return new self($assert);
+        return new self(\Closure::fromCallable($assert));
     }
 }

@@ -13,15 +13,12 @@ use Innmind\Immutable\Predicate as PredicateInterface;
  */
 final class Predicate implements PredicateInterface
 {
-    /** @var Constraint\Implementation<mixed, T> */
-    private Constraint\Implementation $constraint;
-
     /**
      * @param Constraint\Implementation<mixed, T> $constraint
      */
-    private function __construct(Constraint\Implementation $constraint)
-    {
-        $this->constraint = $constraint;
+    private function __construct(
+        private Constraint\Implementation $constraint,
+    ) {
     }
 
     #[\Override]

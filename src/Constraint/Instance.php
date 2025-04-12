@@ -14,15 +14,12 @@ use Innmind\Immutable\Validation;
  */
 final class Instance implements Implementation
 {
-    /** @var class-string<T> */
-    private string $class;
-
     /**
      * @param class-string<T> $class
      */
-    private function __construct(string $class)
-    {
-        $this->class = $class;
+    private function __construct(
+        private string $class,
+    ) {
     }
 
     #[\Override]

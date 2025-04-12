@@ -15,19 +15,14 @@ use Innmind\Immutable\Validation;
  */
 final class Map implements Implementation
 {
-    /** @var Implementation<I, O> */
-    private Implementation $constraint;
-    /** @var callable(O): T */
-    private $map;
-
     /**
      * @param Implementation<I, O> $constraint
-     * @param callable(O): T $map
+     * @param \Closure(O): T $map
      */
-    private function __construct(Implementation $constraint, callable $map)
-    {
-        $this->constraint = $constraint;
-        $this->map = $map;
+    private function __construct(
+        private Implementation $constraint,
+        private \Closure $map,
+    ) {
     }
 
     #[\Override]
@@ -51,6 +46,6 @@ final class Map implements Implementation
      */
     public static function of(Implementation $constraint, callable $map): self
     {
-        return new self($constraint, $map);
+        return new self($constraint, \Closure::fromCallable($map));
     }
 }

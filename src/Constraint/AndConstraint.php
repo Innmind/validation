@@ -15,19 +15,14 @@ use Innmind\Immutable\Validation;
  */
 final class AndConstraint implements Implementation
 {
-    /** @var Implementation<A, B> */
-    private Implementation $a;
-    /** @var Implementation<B, C> */
-    private Implementation $b;
-
     /**
      * @param Implementation<A, B> $a
      * @param Implementation<B, C> $b
      */
-    private function __construct(Implementation $a, Implementation $b)
-    {
-        $this->a = $a;
-        $this->b = $b;
+    private function __construct(
+        private Implementation $a,
+        private Implementation $b,
+    ) {
     }
 
     #[\Override]

@@ -16,8 +16,9 @@ final class Has implements Implementation
     /**
      * @param non-empty-string $key
      */
-    private function __construct(private string $key)
-    {
+    private function __construct(
+        private string $key,
+    ) {
     }
 
     /**

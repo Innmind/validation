@@ -10,15 +10,12 @@ use Innmind\Immutable\Sequence;
  */
 final class KeyPath
 {
-    /** @var Sequence<non-empty-string> */
-    private Sequence $parts;
-
     /**
      * @param Sequence<non-empty-string> $parts
      */
-    private function __construct(Sequence $parts)
-    {
-        $this->parts = $parts;
+    private function __construct(
+        private Sequence $parts,
+    ) {
     }
 
     /**

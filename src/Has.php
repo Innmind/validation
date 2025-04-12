@@ -20,8 +20,9 @@ final class Has implements Provider
     /**
      * @param non-empty-string $key
      */
-    private function __construct(private string $key)
-    {
+    private function __construct(
+        private string $key,
+    ) {
     }
 
     #[\Override]

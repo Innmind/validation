@@ -17,8 +17,9 @@ final class Each implements Implementation
     /**
      * @param Implementation<mixed, T> $constraint
      */
-    private function __construct(private Implementation $constraint)
-    {
+    private function __construct(
+        private Implementation $constraint,
+    ) {
     }
 
     /**
