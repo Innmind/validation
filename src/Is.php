@@ -87,17 +87,17 @@ final class Is
      *
      * @template E
      *
-     * @param Implementation<mixed, E>|Provider<mixed, E>|Constraint<mixed, E>|null $each
+     * @param Provider<mixed, E>|Constraint<mixed, E>|null $each
      *
      * @return Constraint<mixed, list<E>>
      */
-    public static function list(Implementation|Provider|Constraint|null $each = null): Constraint
+    public static function list(Provider|Constraint|null $each = null): Constraint
     {
         $constraint = Constraint::list();
 
         return match ($each) {
             null => $constraint,
-            default => $constraint->and(Each::of($each)),
+            default => $constraint->and(Constraint::each($each)),
         };
     }
 

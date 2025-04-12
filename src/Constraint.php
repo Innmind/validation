@@ -158,6 +158,21 @@ final class Constraint
     /**
      * @psalm-pure
      * @template A
+     *
+     * @param self<mixed, A>|Provider<mixed, A> $constraint
+     *
+     * @return self<list, list<A>>
+     */
+    public static function each(self|Provider $constraint): self
+    {
+        return new self(Constraint\Each::of(
+            self::collapse($constraint)->implementation,
+        ));
+    }
+
+    /**
+     * @psalm-pure
+     * @template A
      * @template B
      *
      * @param Implementation<A, B> $implementation
