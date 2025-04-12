@@ -96,7 +96,7 @@ final class Is
      *
      * @param non-empty-string $key
      */
-    public static function shape(string $key, Provider|Constraint $constraint): Shape
+    public static function shape(string $key, Provider|Constraint $constraint): Provider\Arr\Shape
     {
         return Shape::of($key, $constraint);
     }

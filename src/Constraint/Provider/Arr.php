@@ -118,4 +118,16 @@ final class Arr implements Provider
             Has::key($key),
         ));
     }
+
+    /**
+     * @param non-empty-string $key
+     */
+    public function shape(string $key, Provider|Constraint $constraint): Arr\Shape
+    {
+        return Arr\Shape::of(
+            $this->build,
+            $key,
+            $constraint,
+        );
+    }
 }
