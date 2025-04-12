@@ -8,20 +8,17 @@ namespace Innmind\Validation;
  */
 final class Failure
 {
-    private KeyPath $path;
-    /** @var non-empty-string */
-    private string $message;
-
     /**
      * @param non-empty-string $message
      */
-    private function __construct(KeyPath $path, string $message)
-    {
-        $this->path = $path;
-        $this->message = $message;
+    private function __construct(
+        private KeyPath $path,
+        private string $message,
+    ) {
     }
 
     /**
+     * @internal
      * @psalm-pure
      *
      * @param non-empty-string $message
@@ -32,6 +29,8 @@ final class Failure
     }
 
     /**
+     * @internal
+     *
      * @param non-empty-string $path
      */
     public function under(string $path): self

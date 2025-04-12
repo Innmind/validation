@@ -16,9 +16,7 @@ composer require innmind/validation
 
 ```php
 use Innmind\Validation\{
-    Shape,
     Is,
-    Each,
     Failure,
 };
 use Innmind\Immutable\Sequence;
@@ -41,7 +39,7 @@ $invalid = [
     'submit' => true,
 ];
 
-$validate = Shape::of('id', Is::int())
+$validate = Is::shape('id', Is::int())
     ->with('username', Is::string())
     ->with(
         'addresses',

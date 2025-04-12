@@ -45,7 +45,7 @@
 By default the error message will be `Value is not of type {primitive}`. You can change it via:
 
 ```php
-$validate = Is::string()->withFailure('Some error message');
+$validate = Is::string()->failWith('Some error message');
 ```
 
 ## Lists
@@ -61,7 +61,7 @@ use Innmind\Validation\Is;
 $validate = Is::list();
 ```
 
-You can also validate that each value in the list is of a given type. Here's how to validate a list os `string`s:
+You can also validate that each value in the list is of a given type. Here's how to validate a list of `string`s:
 
 ```php
 use Innmind\Validation\Is;

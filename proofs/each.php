@@ -1,10 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-use Innmind\Validation\{
-    Each,
-    Is,
-};
+use Innmind\Validation\Is;
 use Innmind\BlackBox\Set;
 
 return static function() {
@@ -16,31 +13,31 @@ return static function() {
         ),
         static function($assert, $ints, $strings) {
             $assert->true(
-                Each::of(Is::int())->asPredicate()($ints),
+                Is::list(Is::int())->asPredicate()($ints),
             );
             $assert->true(
-                Each::of(Is::int()->or(Is::string()))->asPredicate()($strings),
+                Is::list(Is::int()->or(Is::string()))->asPredicate()($strings),
             );
             $assert->true(
-                Each::of(Is::int()->or(Is::string()))->asPredicate()(\array_merge(
+                Is::list(Is::int()->or(Is::string()))->asPredicate()(\array_merge(
                     $ints,
                     $strings,
                 )),
             );
             $assert->same(
                 $ints,
-                Each::of(Is::int())($ints)->match(
+                Is::list(Is::int())($ints)->match(
                     static fn($value) => $value,
                     static fn() => null,
                 ),
             );
 
             $assert->false(
-                Each::of(Is::int())->asPredicate()($strings),
+                Is::list(Is::int())->asPredicate()($strings),
             );
             $assert->same(
                 [['$', 'Value is not of type int']],
-                Each::of(Is::int())($strings)->match(
+                Is::list(Is::int())($strings)->match(
                     static fn() => null,
                     static fn($failures) => $failures
                         ->map(static fn($failure) => [
@@ -66,7 +63,7 @@ return static function() {
 
             $assert->same(
                 $doubles,
-                Each::of(
+                Is::list(
                     Is::int()->map(static fn($i) => $i * 2),
                 )($ints)->match(
                     static fn($value) => $value,

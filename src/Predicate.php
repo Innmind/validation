@@ -6,21 +6,19 @@ namespace Innmind\Validation;
 use Innmind\Immutable\Predicate as PredicateInterface;
 
 /**
+ * @internal
  * @template T
  * @implements PredicateInterface<T>
  * @psalm-immutable
  */
 final class Predicate implements PredicateInterface
 {
-    /** @var Constraint<mixed, T> */
-    private Constraint $constraint;
-
     /**
-     * @param Constraint<mixed, T> $constraint
+     * @param Constraint\Implementation<mixed, T> $constraint
      */
-    private function __construct(Constraint $constraint)
-    {
-        $this->constraint = $constraint;
+    private function __construct(
+        private Constraint\Implementation $constraint,
+    ) {
     }
 
     #[\Override]
@@ -33,14 +31,15 @@ final class Predicate implements PredicateInterface
     }
 
     /**
+     * @internal
      * @template A
      * @psalm-pure
      *
-     * @param Constraint<mixed, A> $constraint
+     * @param Constraint\Implementation<mixed, A> $constraint
      *
      * @return self<A>
      */
-    public static function of(Constraint $constraint): self
+    public static function of(Constraint\Implementation $constraint): self
     {
         return new self($constraint);
     }

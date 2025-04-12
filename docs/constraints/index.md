@@ -7,6 +7,7 @@ Each `Constraint` have the following methods:
 - `->or()`
 - `->map()`
 - `->asPredicate()`
+- `->failWith()`
 
 ## `->__invoke()`
 
@@ -39,13 +40,13 @@ Let's take the example of making sure a `string` is shorter than `255` character
 ```php hl_lines="3-4 6 9-14"
 use Innmind\Validation\{
     Is,
-    Of,
+    Constraint,
     Failure,
 };
 use Innmind\Immutable\Validation;
 
 function(mixed $input): string {
-    $validate = Is::string()->and(Of::callable(
+    $validate = Is::string()->and(Constraint::of(
         static fn(string $value) => match (true) {
             \strlen($value) < 255 => Validation::success($value),
             default => Validation::fail(Failure::of('String is too long')),
@@ -119,6 +120,18 @@ Sequence::of(1, 'a', null, 'b', new \stdClass, 'c')
 
 ??? note
     There's no need to apply transformations on your constraints when used as predicates as the outputed value is not used.
+
+## `->failWith()`
+
+This method allows to change the failure message.
+
+```php
+use Innmind\Validation\Is;
+
+$password = Is::string()->failWith('The password is required');
+
+$password($someInput);
+```
 
 ## Handling failures
 

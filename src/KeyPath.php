@@ -10,18 +10,16 @@ use Innmind\Immutable\Sequence;
  */
 final class KeyPath
 {
-    /** @var Sequence<non-empty-string> */
-    private Sequence $parts;
-
     /**
      * @param Sequence<non-empty-string> $parts
      */
-    private function __construct(Sequence $parts)
-    {
-        $this->parts = $parts;
+    private function __construct(
+        private Sequence $parts,
+    ) {
     }
 
     /**
+     * @internal
      * @psalm-pure
      */
     public static function root(): self
@@ -30,6 +28,7 @@ final class KeyPath
     }
 
     /**
+     * @internal
      * @param non-empty-string $path
      */
     public function under(string $path): self

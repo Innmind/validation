@@ -5,7 +5,7 @@ Here's the constraint to validate the HTTP response <https://packagist.org/packa
 ```php
 use Innmind\Validation\Is;
 
-$validate = Is::associativeArray(
+$validate = Is::array()->associative(
     Is::string(),
     Is::shape('repository', Is::string())
         ->with('abandoned', Is::bool()->or(Is::string())),
