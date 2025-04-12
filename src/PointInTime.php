@@ -25,6 +25,6 @@ final class PointInTime
      */
     public static function ofFormat(Clock $clock, Format $format): Constraint
     {
-        return Constraint::pointInTime($clock, $format);
+        return Constraint::pointInTime($clock)->format($format);
     }
 }

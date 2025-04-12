@@ -7,11 +7,7 @@ use Innmind\Validation\{
     Constraint\Implementation,
     Constraint\Provider,
 };
-use Innmind\TimeContinuum\{
-    Clock,
-    Format,
-    PointInTime as PointInTimeInterface,
-};
+use Innmind\TimeContinuum\Clock;
 use Innmind\Immutable\{
     Validation,
     Predicate,
@@ -127,12 +123,13 @@ final class Constraint
 
     /**
      * @psalm-pure
-     *
-     * @return self<string, PointInTimeInterface>
      */
-    public static function pointInTime(Clock $clock, Format $format): self
+    public static function pointInTime(Clock $clock): Provider\Clock
     {
-        return new self(Constraint\PointInTime::ofFormat($clock, $format));
+        return Provider\Clock::of(
+            self::build(...),
+            $clock,
+        );
     }
 
     /**
