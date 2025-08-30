@@ -75,6 +75,21 @@ trait Like
     }
 
     /**
+     * @template T
+     *
+     * @param callable(O): Constraint<O, T> $map
+     *
+     * @return Constraint<I, T>
+     */
+    public function flatMap(callable $map): Constraint
+    {
+        /** @psalm-suppress InvalidArgument */
+        return $this
+            ->toConstraint()
+            ->flatMap($map);
+    }
+
+    /**
      * @param non-empty-string $message
      *
      * @return Constraint<I, O>

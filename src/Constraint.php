@@ -174,6 +174,21 @@ final class Constraint
     }
 
     /**
+     * @template T
+     *
+     * @param callable(O): self<O, T> $map
+     *
+     * @return self<I, T>
+     */
+    public function flatMap(callable $map): self
+    {
+        return new self(Constraint\FlatMap::of(
+            $this->implementation,
+            $map,
+        ));
+    }
+
+    /**
      * @param non-empty-string $message
      *
      * @return self<I, O>
