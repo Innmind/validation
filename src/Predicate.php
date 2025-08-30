@@ -39,6 +39,7 @@ final class Predicate implements PredicateInterface
      *
      * @return self<A>
      */
+    #[\NoDiscard]
     public static function of(Constraint\Implementation $constraint): self
     {
         return new self($constraint);

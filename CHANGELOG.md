@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.0 - 2025-08-30
+
+### Added
+
+- `Innmind\Validation\Constraint::flatMap()`
+
+### Changed
+
+- `Innmind\Validation\Failure::of()` is now longer flagged as internal
+
 ## 2.0.0 - 2025-04-12
 
 ### Added

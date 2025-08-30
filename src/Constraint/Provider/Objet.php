@@ -35,6 +35,7 @@ final class Objet implements Provider
      *
      * @param pure-Closure(Implementation): Constraint $build
      */
+    #[\NoDiscard]
     public static function of(\Closure $build): self
     {
         return new self($build);
@@ -54,6 +55,7 @@ final class Objet implements Provider
      *
      * @return Constraint<mixed, A>
      */
+    #[\NoDiscard]
     public function instance(string $class): Constraint
     {
         /** @var Constraint<mixed, A> */

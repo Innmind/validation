@@ -23,6 +23,7 @@ final class PointInTime
      *
      * @return Constraint<string, PointInTimeInterface>
      */
+    #[\NoDiscard]
     public static function ofFormat(Clock $clock, Format $format): Constraint
     {
         return Constraint::pointInTime($clock)->format($format);

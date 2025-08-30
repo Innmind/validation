@@ -18,5 +18,6 @@ interface Implementation
      * @param I $input
      * @return Validation<Failure, O>
      */
+    #[\NoDiscard]
     public function __invoke(mixed $input): Validation;
 }

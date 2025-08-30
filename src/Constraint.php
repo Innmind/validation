@@ -33,6 +33,7 @@ final class Constraint
      *
      * @return Validation<Failure, O>
      */
+    #[\NoDiscard]
     public function __invoke(mixed $input): Validation
     {
         return ($this->implementation)($input);
@@ -47,6 +48,7 @@ final class Constraint
      *
      * @return self<T, U>
      */
+    #[\NoDiscard]
     public static function of(callable $assert): self
     {
         return new self(Constraint\Of::callable($assert));
@@ -55,6 +57,7 @@ final class Constraint
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function object(): Provider\Objet
     {
         return Provider\Objet::of(self::build(...));
@@ -63,6 +66,7 @@ final class Constraint
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function string(): Provider\Str
     {
         return Provider\Str::of(self::build(...));
@@ -71,6 +75,7 @@ final class Constraint
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function int(): Provider\Integer
     {
         return Provider\Integer::of(self::build(...));
@@ -81,6 +86,7 @@ final class Constraint
      *
      * @return self<mixed, float>
      */
+    #[\NoDiscard]
     public static function float(): self
     {
         return new self(Constraint\Primitive::float());
@@ -89,6 +95,7 @@ final class Constraint
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function array(): Provider\Arr
     {
         return Provider\Arr::of(
@@ -102,6 +109,7 @@ final class Constraint
      *
      * @return self<mixed, bool>
      */
+    #[\NoDiscard]
     public static function bool(): self
     {
         return new self(Constraint\Primitive::bool());
@@ -112,6 +120,7 @@ final class Constraint
      *
      * @return self<mixed, null>
      */
+    #[\NoDiscard]
     public static function null(): self
     {
         return new self(Constraint\Primitive::null());
@@ -120,6 +129,7 @@ final class Constraint
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function pointInTime(Clock $clock): Provider\Clock
     {
         return Provider\Clock::of(
@@ -135,6 +145,7 @@ final class Constraint
      *
      * @return self<I, T>
      */
+    #[\NoDiscard]
     public function and(self|Provider $constraint): self
     {
         return new self(Constraint\AndConstraint::of(
@@ -150,6 +161,7 @@ final class Constraint
      *
      * @return self<I, O|T>
      */
+    #[\NoDiscard]
     public function or(self|Provider $constraint): self
     {
         return new self(Constraint\OrConstraint::of(
@@ -165,9 +177,26 @@ final class Constraint
      *
      * @return self<I, T>
      */
+    #[\NoDiscard]
     public function map(callable $map): self
     {
         return new self(Constraint\Map::of(
+            $this->implementation,
+            $map,
+        ));
+    }
+
+    /**
+     * @template T
+     *
+     * @param callable(O): self<O, T> $map
+     *
+     * @return self<I, T>
+     */
+    #[\NoDiscard]
+    public function flatMap(callable $map): self
+    {
+        return new self(Constraint\FlatMap::of(
             $this->implementation,
             $map,
         ));
@@ -178,6 +207,7 @@ final class Constraint
      *
      * @return self<I, O>
      */
+    #[\NoDiscard]
     public function failWith(string $message): self
     {
         return new self(Constraint\FailWith::of(
@@ -193,6 +223,7 @@ final class Constraint
      *
      * @return self<I, O>
      */
+    #[\NoDiscard]
     public function withFailure(string $message): self
     {
         return $this->failWith($message);
@@ -201,6 +232,7 @@ final class Constraint
     /**
      * @return Predicate<O>
      */
+    #[\NoDiscard]
     public function asPredicate(): Predicate
     {
         return namespace\Predicate::of($this->implementation);

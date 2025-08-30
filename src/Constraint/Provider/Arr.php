@@ -42,6 +42,7 @@ final class Arr implements Provider
      * @param pure-Closure(Implementation): Constraint $build
      * @param pure-Closure(Constraint|Provider): Implementation $extract
      */
+    #[\NoDiscard]
     public static function of(\Closure $build, \Closure $extract): self
     {
         return new self($build, $extract);
@@ -61,6 +62,7 @@ final class Arr implements Provider
      *
      * @return Constraint<mixed, list<E>>
      */
+    #[\NoDiscard]
     public function list(Constraint|Provider|null $each = null): Constraint
     {
         $constraint = AndConstraint::of(
@@ -89,6 +91,7 @@ final class Arr implements Provider
      *
      * @return Constraint<mixed, Map<K, V>>
      */
+    #[\NoDiscard]
     public function associative(
         Constraint|Provider $key,
         Constraint|Provider $value,
@@ -110,6 +113,7 @@ final class Arr implements Provider
      *
      * @return Constraint<mixed, mixed>
      */
+    #[\NoDiscard]
     public function hasKey(string $key): Constraint
     {
         /** @var Constraint<mixed, mixed> */
@@ -122,6 +126,7 @@ final class Arr implements Provider
     /**
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public function shape(string $key, Provider|Constraint $constraint): Arr\Shape
     {
         return Arr\Shape::of(

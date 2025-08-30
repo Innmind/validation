@@ -20,6 +20,7 @@ final class Instance
      *
      * @return Constraint<mixed, A>
      */
+    #[\NoDiscard]
     public static function of(string $class): Constraint
     {
         return Constraint::object()->instance($class);

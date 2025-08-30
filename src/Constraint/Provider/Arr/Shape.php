@@ -57,6 +57,7 @@ final class Shape implements Provider
      * @param pure-Closure(Implementation): Constraint $build
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public static function of(
         \Closure $build,
         string $key,
@@ -79,6 +80,7 @@ final class Shape implements Provider
     /**
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public function with(string $key, Provider|Constraint $constraint): self
     {
         if ($constraint instanceof Provider) {
@@ -101,6 +103,7 @@ final class Shape implements Provider
     /**
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public function optional(string $key, Provider|Constraint|null $constraint = null): self
     {
         $optional = $this->optional;
@@ -128,6 +131,7 @@ final class Shape implements Provider
     /**
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public function default(string $key, mixed $value): self
     {
         if (!\in_array($key, $this->optional, true)) {
@@ -152,6 +156,7 @@ final class Shape implements Provider
      * @param non-empty-string $from
      * @param non-empty-string $to
      */
+    #[\NoDiscard]
     public function rename(string $from, string $to): self
     {
         $rename = $this->rename;
@@ -170,6 +175,7 @@ final class Shape implements Provider
     /**
      * @param callable(non-empty-string): non-empty-string $message
      */
+    #[\NoDiscard]
     public function withKeyFailure(callable $message): self
     {
         return new self(
