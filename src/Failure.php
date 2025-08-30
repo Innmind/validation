@@ -22,6 +22,7 @@ final class Failure
      *
      * @param non-empty-string $message
      */
+    #[\NoDiscard]
     public static function of(string $message): self
     {
         return new self(KeyPath::root(), $message);
@@ -32,11 +33,13 @@ final class Failure
      *
      * @param non-empty-string $path
      */
+    #[\NoDiscard]
     public function under(string $path): self
     {
         return new self($this->path->under($path), $this->message);
     }
 
+    #[\NoDiscard]
     public function path(): KeyPath
     {
         return $this->path;
@@ -45,6 +48,7 @@ final class Failure
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function message(): string
     {
         return $this->message;

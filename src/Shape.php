@@ -22,6 +22,7 @@ final class Shape
      *
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public static function of(string $key, Provider|Constraint $constraint): Arr\Shape
     {
         return Constraint::array()->shape($key, $constraint);

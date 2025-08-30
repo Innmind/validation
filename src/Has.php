@@ -38,6 +38,7 @@ final class Has implements Provider
      *
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public static function key(string $key): self
     {
         return new self($key);
@@ -50,6 +51,7 @@ final class Has implements Provider
      *
      * @return Constraint<mixed, mixed>
      */
+    #[\NoDiscard]
     public function withFailure(callable $message): Constraint
     {
         /** @psalm-suppress ImpureFunctionCall */

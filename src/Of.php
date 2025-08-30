@@ -23,6 +23,7 @@ final class Of
      *
      * @return Constraint<T, U>
      */
+    #[\NoDiscard]
     public static function callable(callable $assert): Constraint
     {
         return Constraint::of($assert);

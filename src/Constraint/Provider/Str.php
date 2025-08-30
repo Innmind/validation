@@ -36,6 +36,7 @@ final class Str implements Provider
      *
      * @param pure-Closure(Implementation): Constraint $build
      */
+    #[\NoDiscard]
     public static function of(\Closure $build): self
     {
         return new self($build);
@@ -51,6 +52,7 @@ final class Str implements Provider
     /**
      * @return Constraint<mixed, non-empty-string>
      */
+    #[\NoDiscard]
     public function nonEmpty(): Constraint
     {
         return $this

@@ -37,6 +37,7 @@ trait Like
      *
      * @return Constraint<I, T>
      */
+    #[\NoDiscard]
     public function and(Constraint|Provider $constraint): Constraint
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
@@ -52,6 +53,7 @@ trait Like
      *
      * @return Constraint<I, O|T>
      */
+    #[\NoDiscard]
     public function or(Constraint|Provider $constraint): Constraint
     {
         return $this
@@ -66,6 +68,7 @@ trait Like
      *
      * @return Constraint<I, T>
      */
+    #[\NoDiscard]
     public function map(callable $map): Constraint
     {
         /** @psalm-suppress InvalidArgument */
@@ -81,6 +84,7 @@ trait Like
      *
      * @return Constraint<I, T>
      */
+    #[\NoDiscard]
     public function flatMap(callable $map): Constraint
     {
         /** @psalm-suppress InvalidArgument */
@@ -94,6 +98,7 @@ trait Like
      *
      * @return Constraint<I, O>
      */
+    #[\NoDiscard]
     public function failWith(string $message): Constraint
     {
         return $this
@@ -108,6 +113,7 @@ trait Like
      *
      * @return Constraint<I, O>
      */
+    #[\NoDiscard]
     public function withFailure(string $message): Constraint
     {
         return $this->failWith($message);
@@ -116,6 +122,7 @@ trait Like
     /**
      * @return Predicate<O>
      */
+    #[\NoDiscard]
     public function asPredicate(): Predicate
     {
         return $this
