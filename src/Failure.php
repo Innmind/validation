@@ -18,7 +18,6 @@ final class Failure
     }
 
     /**
-     * @internal
      * @psalm-pure
      *
      * @param non-empty-string $message
