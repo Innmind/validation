@@ -16,5 +16,6 @@ interface Provider
      *
      * @return Constraint<T, U>
      */
+    #[\NoDiscard]
     public function toConstraint(): Constraint;
 }

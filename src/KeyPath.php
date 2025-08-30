@@ -22,6 +22,7 @@ final class KeyPath
      * @internal
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function root(): self
     {
         return new self(Sequence::of());
@@ -31,6 +32,7 @@ final class KeyPath
      * @internal
      * @param non-empty-string $path
      */
+    #[\NoDiscard]
     public function under(string $path): self
     {
         return new self(($this->parts)($path));
@@ -44,6 +46,7 @@ final class KeyPath
      *
      * @return T
      */
+    #[\NoDiscard]
     public function match(callable $path, callable $root)
     {
         return $this
@@ -58,6 +61,7 @@ final class KeyPath
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function toString(): string
     {
         return $this->match(

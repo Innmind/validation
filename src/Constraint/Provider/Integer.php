@@ -36,6 +36,7 @@ final class Integer implements Provider
      *
      * @param pure-Closure(Implementation): Constraint $build
      */
+    #[\NoDiscard]
     public static function of(\Closure $build): self
     {
         return new self($build);
@@ -51,6 +52,7 @@ final class Integer implements Provider
     /**
      * @return Constraint<mixed, int<1, max>>
      */
+    #[\NoDiscard]
     public function positive(): Constraint
     {
         return $this
@@ -64,6 +66,7 @@ final class Integer implements Provider
     /**
      * @return Constraint<mixed, int<min, -1>>
      */
+    #[\NoDiscard]
     public function negative(): Constraint
     {
         return $this
@@ -77,6 +80,7 @@ final class Integer implements Provider
     /**
      * @return Constraint<mixed, int>
      */
+    #[\NoDiscard]
     public function range(int $min, int $max): Constraint
     {
         return $this

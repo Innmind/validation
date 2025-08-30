@@ -33,6 +33,7 @@ final class Clock
      *
      * @param pure-Closure(Implementation): Constraint $build
      */
+    #[\NoDiscard]
     public static function of(\Closure $build, Concrete $clock): self
     {
         return new self($build, $clock);
@@ -43,6 +44,7 @@ final class Clock
      *
      * @return Constraint<string, PointInTime>
      */
+    #[\NoDiscard]
     public function format(Format $format): Constraint
     {
         /** @var Constraint<string, PointInTime> */

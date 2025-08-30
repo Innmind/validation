@@ -25,6 +25,7 @@ final class AssociativeArray
      *
      * @return Constraint<mixed, Map<A, B>>
      */
+    #[\NoDiscard]
     public static function of(Provider|Constraint $key, Provider|Constraint $value): Constraint
     {
         return Constraint::array()->associative($key, $value);

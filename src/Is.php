@@ -22,6 +22,7 @@ final class Is
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function string(): Provider\Str
     {
         return Constraint::string();
@@ -30,6 +31,7 @@ final class Is
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function int(): Provider\Integer
     {
         return Constraint::int();
@@ -40,6 +42,7 @@ final class Is
      *
      * @return Constraint<mixed, float>
      */
+    #[\NoDiscard]
     public static function float(): Constraint
     {
         return Constraint::float();
@@ -48,6 +51,7 @@ final class Is
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function array(): Provider\Arr
     {
         return Constraint::array();
@@ -58,6 +62,7 @@ final class Is
      *
      * @return Constraint<mixed, bool>
      */
+    #[\NoDiscard]
     public static function bool(): Constraint
     {
         return Constraint::bool();
@@ -68,6 +73,7 @@ final class Is
      *
      * @return Constraint<mixed, null>
      */
+    #[\NoDiscard]
     public static function null(): Constraint
     {
         return Constraint::null();
@@ -82,6 +88,7 @@ final class Is
      *
      * @return Constraint<mixed, list<E>>
      */
+    #[\NoDiscard]
     public static function list(Provider|Constraint|null $each = null): Constraint
     {
         return Constraint::array()->list($each);
@@ -92,6 +99,7 @@ final class Is
      *
      * @param non-empty-string $key
      */
+    #[\NoDiscard]
     public static function shape(string $key, Provider|Constraint $constraint): Provider\Arr\Shape
     {
         return Shape::of($key, $constraint);
@@ -107,6 +115,7 @@ final class Is
      *
      * @return Constraint<mixed, Map<K, V>>
      */
+    #[\NoDiscard]
     public static function associativeArray(
         Provider|Constraint $key,
         Provider|Constraint $value,
@@ -122,6 +131,7 @@ final class Is
      *
      * @return Constraint<Maybe<V>, V>
      */
+    #[\NoDiscard]
     public static function just(?string $message = null): Constraint
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
@@ -142,6 +152,7 @@ final class Is
      *
      * @return Constraint<mixed, V>
      */
+    #[\NoDiscard]
     public static function value(mixed $value, ?string $message = null): Constraint
     {
         return Constraint::of(static fn(mixed $in) => match ($in) {
