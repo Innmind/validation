@@ -49,6 +49,22 @@ trait Like
     /**
      * @template T
      *
+     * @param Constraint<O, T>|Provider<O, T> $constraint
+     *
+     * @return Constraint<I, T>
+     */
+    #[\NoDiscard]
+    public function guard(Constraint|Provider $constraint): Constraint
+    {
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        return $this
+            ->toConstraint()
+            ->guard($constraint);
+    }
+
+    /**
+     * @template T
+     *
      * @param Constraint<I, T>|Provider<I, T> $constraint
      *
      * @return Constraint<I, O|T>
@@ -59,6 +75,21 @@ trait Like
         return $this
             ->toConstraint()
             ->or($constraint);
+    }
+
+    /**
+     * @template T
+     *
+     * @param Constraint<I, T>|Provider<I, T> $constraint
+     *
+     * @return Constraint<I, O|T>
+     */
+    #[\NoDiscard]
+    public function xor(Constraint|Provider $constraint): Constraint
+    {
+        return $this
+            ->toConstraint()
+            ->xor($constraint);
     }
 
     /**

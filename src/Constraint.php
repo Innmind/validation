@@ -155,6 +155,25 @@ final class Constraint
     }
 
     /**
+     * This will prevent the failures returned by `$constraint` from being
+     * recovered when using `self::xor()`
+     *
+     * @template T
+     *
+     * @param self<O, T>|Provider<O, T> $constraint
+     *
+     * @return self<I, T>
+     */
+    #[\NoDiscard]
+    public function guard(self|Provider $constraint): self
+    {
+        return new self(Constraint\Guard::of(
+            $this->implementation,
+            self::collapse($constraint)->implementation,
+        ));
+    }
+
+    /**
      * @template T
      *
      * @param self<I, T>|Provider<I, T> $constraint
@@ -165,6 +184,22 @@ final class Constraint
     public function or(self|Provider $constraint): self
     {
         return new self(Constraint\OrConstraint::of(
+            $this->implementation,
+            self::collapse($constraint)->implementation,
+        ));
+    }
+
+    /**
+     * @template T
+     *
+     * @param self<I, T>|Provider<I, T> $constraint
+     *
+     * @return self<I, O|T>
+     */
+    #[\NoDiscard]
+    public function xor(self|Provider $constraint): self
+    {
+        return new self(Constraint\XOrConstraint::of(
             $this->implementation,
             self::collapse($constraint)->implementation,
         ));

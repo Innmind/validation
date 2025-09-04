@@ -4,7 +4,9 @@ Each `Constraint` have the following methods:
 
 - `->__invoke()`
 - `->and()`
+- `->guard()`
 - `->or()`
+- `->xor()`
 - `->map()`
 - `->asPredicate()`
 - `->failWith()`
@@ -60,6 +62,10 @@ function(mixed $input): string {
 }
 ```
 
+## `->guard()`
+
+This is like [`->and()`](#-and) except that the failures of the constraint passed as argument won't be recovered by a call to [`->xor()`](#-xor).
+
 ## `->or()`
 
 This method allows to have an alternate validation in case the first one fails. This is useful for unions types.
@@ -74,10 +80,28 @@ function(mixed $input): string|int {
 
     return return $validate($input)->match(
         static fn(string|int $value) => $value,
-        static fn() => throw new \RuntimeException('Input is not valid');
+        static fn() => throw new \RuntimeException('Input is not valid'),
     );
 }
 ```
+
+## `->xor()`
+
+```php
+use Innmind\Validation\Is;
+
+$validate = Is::string()
+    ->guard(Is::value('foobar'))
+    ->xor(Is::int());
+$validate($value)->match(
+    static fn(string|int $value) => $value,
+    static fn() => throw new \RuntimeException('Input is not valid'),
+);
+```
+
+Unlike `->or()`, if `#!php $value` is any string other than `foobar` this will raise an exception. This is because the failure due to `#!php Is::value('foobar')` is _guarded_.
+
+This is the only combination preventing a failure from being recovered. Replacing `->guard()` by `->and()` or `->xor()` by `->or()` will work the same way as `->and()->or()`.
 
 ## `->map()`
 

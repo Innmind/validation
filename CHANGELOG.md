@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Innmind\Validation\Constraint::guard()`
+- `Innmind\Validation\Constraint::xor()`
+
+### Changed
+
+- Requires `innmind/immutable:~5.19`
+
 ## 2.1.0 - 2025-08-30
 
 ### Added
