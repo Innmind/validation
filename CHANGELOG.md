@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- `Innmind\Validation\Failure::tag()`
+- `Innmind\Validation\Failure::tags()`
+
 ## 2.2.0 - 2025-09-04
 
 ### Added
