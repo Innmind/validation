@@ -8,6 +8,10 @@
 - `Innmind\Validation\Failure::tags()`
 - `Innmind\Validation\Constraint::mapFailures()`
 
+### Changed
+
+- `Innmind\Validation\Failure::under()` is now longer flagged as internal
+
 ## 2.2.0 - 2025-09-04
 
 ### Added
