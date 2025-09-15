@@ -33,8 +33,6 @@ final class Failure
     }
 
     /**
-     * @internal
-     *
      * @param non-empty-string $path
      */
     #[\NoDiscard]
