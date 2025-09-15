@@ -60,4 +60,41 @@ return static function() {
             );
         },
     );
+
+    yield proof(
+        'Constraint::mapFailures()',
+        given(
+            Set::type(),
+            Set::strings(),
+            Set::strings(),
+        ),
+        static function($assert, $value, $message, $path) {
+            $success = Validation::success(...);
+            $fail = static fn() => Validation::fail(Failure::of($message));
+
+            $assert->same(
+                $value,
+                Constraint::of($success)
+                    ->mapFailures(static fn($failure) => $failure->under($path))($value)
+                    ->match(
+                        static fn($value) => $value,
+                        static fn() => null,
+                    ),
+            );
+            $assert->same(
+                [[$path, $message]],
+                Constraint::of($fail)
+                    ->mapFailures(static fn($failure) => $failure->under($path))($value)
+                    ->match(
+                        static fn() => null,
+                        static fn($failures) => $failures
+                            ->map(static fn($failure) => [
+                                $failure->path()->toString(),
+                                $failure->message(),
+                            ])
+                            ->toList(),
+                    ),
+            );
+        },
+    );
 };
