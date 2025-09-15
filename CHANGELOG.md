@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.3.0 - 2025-09-15
+
+### Added
+
+- `Innmind\Validation\Failure::tag()`
+- `Innmind\Validation\Failure::tags()`
+- `Innmind\Validation\Constraint::mapFailures()`
+
+### Changed
+
+- `Innmind\Validation\Failure::under()` is now longer flagged as internal
+
 ## 2.2.0 - 2025-09-04
 
 ### Added
