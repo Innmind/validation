@@ -265,6 +265,20 @@ final class Constraint
     }
 
     /**
+     * @param callable(Failure): Failure $map
+     *
+     * @return self<I, O>
+     */
+    #[\NoDiscard]
+    public function mapFailures(callable $map): self
+    {
+        return new self(Constraint\MapFailures::of(
+            $this->implementation,
+            $map,
+        ));
+    }
+
+    /**
      * @return Predicate<O>
      */
     #[\NoDiscard]
