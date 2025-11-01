@@ -284,7 +284,14 @@ final class Constraint
     #[\NoDiscard]
     public function asPredicate(): Predicate
     {
-        return namespace\Predicate::of($this->implementation);
+        /**
+         * @psalm-suppress MixedArgument
+         * @var Predicate<O>
+         */
+        return Predicate::of(fn($value) => ($this->implementation)($value)->match(
+            static fn() => true,
+            static fn() => false,
+        ));
     }
 
     /**
