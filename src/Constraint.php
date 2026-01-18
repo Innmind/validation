@@ -7,7 +7,7 @@ use Innmind\Validation\{
     Constraint\Implementation,
     Constraint\Provider,
 };
-use Innmind\TimeContinuum\Clock;
+use Innmind\Time\Clock;
 use Innmind\Immutable\{
     Validation,
     Predicate,
