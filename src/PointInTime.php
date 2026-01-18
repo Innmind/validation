@@ -3,10 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Validation;
 
-use Innmind\TimeContinuum\{
+use Innmind\Time\{
     Clock,
     Format,
-    PointInTime as PointInTimeInterface,
+    Point,
 };
 
 /**
@@ -21,7 +21,7 @@ final class PointInTime
     /**
      * @psalm-pure
      *
-     * @return Constraint<string, PointInTimeInterface>
+     * @return Constraint<string, Point>
      */
     #[\NoDiscard]
     public static function ofFormat(Clock $clock, Format $format): Constraint

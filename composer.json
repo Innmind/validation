@@ -15,9 +15,9 @@
         "issues": "http://github.com/innmind/validation/issues"
     },
     "require": {
-        "php": "~8.2",
-        "innmind/immutable": "~5.19",
-        "innmind/time-continuum": "~3.4|^4.0.2"
+        "php": "~8.4",
+        "innmind/immutable": "~6.0",
+        "innmind/time": "~1.0"
     },
     "autoload": {
         "psr-4": {
@@ -25,7 +25,7 @@
         }
     },
     "require-dev": {
-        "innmind/static-analysis": "^1.2.1",
+        "innmind/static-analysis": "~1.3",
         "innmind/black-box": "~6.1",
         "innmind/coding-standard": "~2.0"
     }

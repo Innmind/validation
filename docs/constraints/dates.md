@@ -1,10 +1,10 @@
 # Dates
 
-This will transform `string`s into `PointInTime`s from the [`innmind/time-continuum` package](https://github.com/Innmind/TimeContinuum/).
+This will transform `string`s into `PointInTime`s from the [`innmind/time` package](https://github.com/Innmind/time/).
 
 ```php
 use Innmind\Validation\Constraint;
-use Innmind\TimeContinuum\{
+use Innmind\Time\{
     Clock,
     Format,
 };

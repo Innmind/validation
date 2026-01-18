@@ -7,10 +7,10 @@ use Innmind\Validation\{
     Constraint,
     Constraint\Implementation,
 };
-use Innmind\TimeContinuum\{
+use Innmind\Time\{
     Clock as Concrete,
     Format,
-    PointInTime,
+    Point,
 };
 
 /**
@@ -42,12 +42,12 @@ final class Clock
     /**
      * @template E
      *
-     * @return Constraint<string, PointInTime>
+     * @return Constraint<string, Point>
      */
     #[\NoDiscard]
     public function format(Format $format): Constraint
     {
-        /** @var Constraint<string, PointInTime> */
+        /** @var Constraint<string, Point> */
         return ($this->build)(Constraint\PointInTime::ofFormat(
             $this->clock,
             $format,

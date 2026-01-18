@@ -4,16 +4,16 @@ declare(strict_types = 1);
 namespace Innmind\Validation\Constraint;
 
 use Innmind\Validation\Failure;
-use Innmind\TimeContinuum\{
+use Innmind\Time\{
     Clock,
     Format,
-    PointInTime as PointInTimeInterface,
+    Point,
 };
 use Innmind\Immutable\Validation;
 
 /**
  * @internal
- * @implements Implementation<string, PointInTimeInterface>
+ * @implements Implementation<string, Point>
  * @psalm-immutable
  */
 final class PointInTime implements Implementation
@@ -27,7 +27,7 @@ final class PointInTime implements Implementation
     /**
      * @param string $value
      *
-     * @return Validation<Failure, PointInTimeInterface>
+     * @return Validation<Failure, Point>
      */
     #[\Override]
     public function __invoke(mixed $value): Validation
