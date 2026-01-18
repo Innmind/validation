@@ -2,38 +2,24 @@
 declare(strict_types = 1);
 
 use Innmind\Validation\PointInTime;
-use Innmind\TimeContinuum\{
-    Earth,
-    Earth\Format\ISO8601,
+use Innmind\Time\{
     Clock,
     Format,
 };
 use Innmind\BlackBox\Set;
-use Fixtures\Innmind\TimeContinuum\{
-    PointInTime as FPointInTime,
-    Earth as FEarth,
-};
+use Fixtures\Innmind\Time\Point as FPoint;
 
 return static function() {
     yield proof(
         'PointInTime::ofFormat()',
         given(
-            match (true) {
-                \class_exists(FEarth\PointInTime::class) => FEarth\PointInTime::any(),
-                default => FPointInTime::any(),
-            },
+            FPoint::any(),
             Set::strings(),
         ),
         static function($assert, $point, $random) {
-            $format = match (true) {
-                \class_exists(ISO8601::class) => new ISO8601,
-                default => Format::of('Y-m-d\TH:i:s.uP'), // to support microseconds
-            };
+            $format = Format::of('Y-m-d\TH:i:s.uP'); // to support microseconds
             $string = $point->format($format);
-            $clock = match (true) {
-                \class_exists(Earth\Clock::class) => new Earth\Clock,
-                default => Clock::live(),
-            };
+            $clock = Clock::live();
 
             $assert->true(
                 PointInTime::ofFormat($clock, $format)->asPredicate()($string),
@@ -72,14 +58,8 @@ return static function() {
             Set::strings(),
         ),
         static function($assert, $expected, $random) {
-            $format = match (true) {
-                \class_exists(ISO8601::class) => new ISO8601,
-                default => Format::iso8601(),
-            };
-            $clock = match (true) {
-                \class_exists(Earth\Clock::class) => new Earth\Clock,
-                default => Clock::live(),
-            };
+            $format = Format::iso8601();
+            $clock = Clock::live();
 
             [[$path, $message]] = PointInTime::ofFormat($clock, $format)->withFailure($expected)($random)->match(
                 static fn() => null,
@@ -97,14 +77,8 @@ return static function() {
     yield test(
         'PointInTime::ofFormat() with empty string fails',
         static function($assert) {
-            $format = match (true) {
-                \class_exists(ISO8601::class) => new ISO8601,
-                default => Format::iso8601(),
-            };
-            $clock = match (true) {
-                \class_exists(Earth\Clock::class) => new Earth\Clock,
-                default => Clock::live(),
-            };
+            $format = Format::iso8601();
+            $clock = Clock::live();
 
             [[$path, $message]] = PointInTime::ofFormat($clock, $format)('')->match(
                 static fn() => null,
