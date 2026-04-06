@@ -140,6 +140,21 @@ final class Constraint
 
     /**
      * @template T
+     * @template U
+     * @psalm-pure
+     *
+     * @param pure-callable(T): U $assert
+     *
+     * @return self<T, U>
+     */
+    #[\NoDiscard]
+    public static function try(callable $assert): self
+    {
+        return new self(Constraint\Throwable::of($assert));
+    }
+
+    /**
+     * @template T
      *
      * @param self<O, T>|Provider<O, T> $constraint
      *

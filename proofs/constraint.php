@@ -6,7 +6,11 @@ use Innmind\Validation\{
     Is,
     Failure,
 };
-use Innmind\Immutable\Validation;
+use Innmind\Immutable\{
+    Validation,
+    Str,
+    Monoid\Concat,
+};
 use Innmind\BlackBox\Set;
 
 return static function() {
@@ -95,6 +99,38 @@ return static function() {
                             ->toList(),
                     ),
             );
+        },
+    );
+
+    yield proof(
+        'Constraint::try()',
+        given(
+            Set::type(),
+            Set::type(),
+            Set::of(DomainException::class, LogicException::class),
+            Set::strings(),
+        ),
+        static function($assert, $in, $value, $exception, $message) {
+            $assert->same(
+                [$in, $value],
+                Constraint::try(static fn($in) => [$in, $value])($in)->match(
+                    static fn($value) => $value,
+                    static fn() => null,
+                ),
+            );
+            $assert
+                ->string(
+                    Constraint::try(static fn() => throw new $exception($message))($in)->match(
+                        static fn() => null,
+                        static fn($failures) => $failures
+                            ->map(static fn($failure) => $failure->message())
+                            ->map(Str::of(...))
+                            ->fold(Concat::monoid)
+                            ->toString(),
+                    ),
+                )
+                ->contains($exception)
+                ->contains($message);
         },
     );
 };

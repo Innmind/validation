@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0 - 2026-04-06
+
+### Added
+
+- `Innmind\Validation\Constraint::try()`
+
 ## 3.0.0 - 2026-01-18
 
 ### Changed
