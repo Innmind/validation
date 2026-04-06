@@ -145,3 +145,37 @@ If you call the constraint with any other value than `42`, the validation will f
         ```
 
     Otherwise it will fail for any other array shape.
+
+## Wrap exceptions
+
+=== "Validation"
+    ```php
+    use Innmind\Validation\{
+        Constraint,
+        Is,
+    };
+
+    $validate = Is::string()->and(Constraint::try(ValueObject::of(...)));
+    ```
+
+=== "`ValueObject`"
+    ```php
+    final class ValueObject
+    {
+        private function __construct(
+            private string $value,
+        ) {
+        }
+
+        public static function of(string $value): self
+        {
+            if ($value === '') {
+                throw new \DomainException('Value cannot be empty');
+            }
+
+            return new self($value);
+        }
+    }
+    ```
+
+If you call the constraint with an empty string the validation will fail with the message `Callable has thrown DomainException(Value cannot be empty)`. For any other string the validation will succeed and return an instance of `ValueObject`.
